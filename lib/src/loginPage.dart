@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_login_signup/src/dashboard.dart';
 import 'package:flutter_login_signup/src/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -16,6 +17,22 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _date = "Not set";
   String _time = "Not set";
+  void initState() {
+    super.initState();
+    star();
+  }
+
+  Widget star() {
+    return Center(
+      child: Container(
+        height: 200,
+        width: 200,
+        child: Image(
+          image: AssetImage("assets/images/road.png"),
+        ),
+      ),
+    );
+  }
   // Widget _backButton() {
   //   return InkWell(
   //     onTap: () {
@@ -63,25 +80,55 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _submitButton() {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
+      height: 50,
+      margin: EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xfffbb448), Color(0xfff7892b)])),
-      child: Text(
-        'Login',
-        style: TextStyle(fontSize: 20, color: Colors.white),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      child: Row(
+        children: <Widget>[
+          // Expanded(
+          //   flex: 5,
+          //   // child: RaisedButton(
+          //   //   child:
+          //   child: Container(
+          //     decoration: BoxDecoration(
+          //       // color: Color(0xfffe9263),
+          //       gradient: LinearGradient(
+          //           begin: Alignment.centerLeft,
+          //           end: Alignment.centerRight,
+          //           colors: [Color(0xfffe9263), Color(0xfff7892b)]),
+          //       borderRadius: BorderRadius.all(
+          //         Radius.circular(5),
+          //       ),
+          //     ),
+          //     alignment: Alignment.center,
+          //     child:
+          Container(
+            // width: double.infinity,
+            child: ButtonTheme(
+              // minWidth: MediaQuery.of(context).size.width,
+              minWidth: 350.0,
+              height: 100.0,
+              child: RaisedButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(8.0),
+                  // side: BorderSide(color: Colors.red)
+                ),
+                color: Color(0xfffe9263),
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Dashboard())),
+                child: Text('Login',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400)),
+              ),
+            ),
+          ),
+          //   ),
+          // ),
+        ],
       ),
     );
   }
@@ -116,6 +163,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),
+      // child: Image(image: AssetImage("assets/images/logo.jpg"),),
     );
   }
 
@@ -134,11 +182,11 @@ class _LoginPageState extends State<LoginPage> {
           //   //   child:
           //   child: Container(
           //     decoration: BoxDecoration(
-          //       // color: Color(0xfffbb448),
+          //       // color: Color(0xfffe9263),
           //       gradient: LinearGradient(
           //           begin: Alignment.centerLeft,
           //           end: Alignment.centerRight,
-          //           colors: [Color(0xfffbb448), Color(0xfff7892b)]),
+          //           colors: [Color(0xfffe9263), Color(0xfff7892b)]),
           //       borderRadius: BorderRadius.all(
           //         Radius.circular(5),
           //       ),
@@ -156,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                   borderRadius: new BorderRadius.circular(8.0),
                   // side: BorderSide(color: Colors.red)
                 ),
-                color: Color(0xfffbb448),
+                color: Color(0xfffe9263),
                 onPressed: () => Navigator.push(context,
                     MaterialPageRoute(builder: (context) => SignUpPage())),
                 child: Text('Guest Login',
@@ -207,26 +255,33 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _title() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-          text: 'Patiala',
-          style: GoogleFonts.portLligatSans(
-            textStyle: Theme.of(context).textTheme.display1,
-            fontSize: 30,
-            fontWeight: FontWeight.w700,
-            color: Color(0xffe46b10),
-          ),
-          children: [
-            TextSpan(
-              text: ' Foun',
-              style: TextStyle(color: Colors.black, fontSize: 30),
-            ),
-            TextSpan(
-              text: 'dation',
-              style: TextStyle(color: Color(0xffe46b10), fontSize: 30),
-            ),
-          ]),
+    // return RichText(
+    //   textAlign: TextAlign.center,
+    //   text: TextSpan(
+    //       text: 'Patiala',
+    //       style: GoogleFonts.portLligatSans(
+    //         textStyle: Theme.of(context).textTheme.display1,
+    //         fontSize: 30,
+    //         fontWeight: FontWeight.w700,
+    //         color: Color(0xffe46b10),
+    //       ),
+    //       children: [
+    //         TextSpan(
+    //           text: ' Foun',
+    //           style: TextStyle(color: Colors.black, fontSize: 30),
+    //         ),
+    //         TextSpan(
+    //           text: 'dation',
+    //           style: TextStyle(color: Color(0xffe46b10), fontSize: 30),
+    //         ),
+    //       ]),
+    // );
+    return Container(
+      height: 200,
+      width: 200,
+      child: Image(
+        image: AssetImage("assets/images/road.png"),
+      ),
     );
   }
 
@@ -259,12 +314,13 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     _title(),
                     SizedBox(
-                      height: 50,
+                      height: 20,
                     ),
                     _emailPasswordWidget(),
                     SizedBox(
                       height: 20,
                     ),
+                    // Container(child: Row(children: <Widget>[Radio(value: Text("Manager"),)],),),
                     _submitButton(),
                     Container(
                       padding: EdgeInsets.symmetric(vertical: 10),

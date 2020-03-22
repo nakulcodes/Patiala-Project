@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_login_signup/src/history.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'src/loginPage.dart';
@@ -12,6 +13,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return MaterialApp(
+      routes: {
+        // When navigating to the "/" route, build the FirstScreen widget.
+        '0': (context) => Dashboard(),
+        // When navigating to the "/second" route, build the SecondScreen widget.
+        '1': (context) =>History(),
+      },
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -20,7 +27,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: Dashboard(),
+      home:LoginPage(),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'history.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -11,10 +12,11 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xfffbb448),
+        backgroundColor: Color(0xfffe9263),
+        // backgroundColor: Colors.white,
         bottomNavigationBar: CurvedNavigationBar(
           height: 50,
-          backgroundColor: Color(0xfffbb448),
+          backgroundColor: Color(0xfffe9263),
           items: <Widget>[
             Icon(Icons.home, size: 30),
             Icon(Icons.history, size: 30),
@@ -22,6 +24,20 @@ class _DashboardState extends State<Dashboard> {
           ],
           onTap: (index) {
             //Handle button tap
+            print(index);
+            if (index == 0) {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Dashboard()));
+            } else if (index == 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => History(index: index),
+                ),
+              );
+            } else if (index == 2) {
+              print("About");
+            }
           },
         ),
         body: SingleChildScrollView(
@@ -31,17 +47,17 @@ class _DashboardState extends State<Dashboard> {
                 padding: EdgeInsets.all(10.0),
                 // margin: EdgeInsets.fromLTRB(5, 10, 10,0),
                 width: double.infinity,
-                height: 300,
+                height: 301,
                 decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(30),
-                        bottomRight: Radius.circular(30)),
-                    // gradient: LinearGradient(
-                    //     begin: Alignment.centerLeft,
-                    //     end: Alignment.centerRight,
-                    //     colors: [Color(0xfffbb448), Color(0xfff7892b)])
-                    ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30)),
+                  // gradient: LinearGradient(
+                  //     begin: Alignment.centerLeft,
+                  //     end: Alignment.centerRight,
+                  //     colors: [Color(0xfffe9263), Color(0xfff7892b)])
+                ),
                 child: Column(
                   // mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
@@ -77,11 +93,13 @@ class _DashboardState extends State<Dashboard> {
                                 Text(
                                   "10",
                                   style: TextStyle(
-                                      color: Color(0xfffbb448), fontSize: 40),
+                                      color: Color(0xfffe9263), fontSize: 40),
                                 ),
-                                Text(
-                                  "Number of\n\t\tHelmets",
-                                  style: TextStyle(fontSize: 20),
+                                Center(
+                                  child: Text(
+                                    "Total\nHelmets",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
                                 )
                               ],
                             ),
@@ -92,10 +110,10 @@ class _DashboardState extends State<Dashboard> {
                                 Text(
                                   "10",
                                   style: TextStyle(
-                                      color: Color(0xfffbb448), fontSize: 40),
+                                      color: Color(0xfffe9263), fontSize: 40),
                                 ),
                                 Text(
-                                  "Helmets\n\tAlloted",
+                                  "Alloted\nHelmet",
                                   style: TextStyle(fontSize: 20),
                                 )
                               ],
@@ -104,14 +122,96 @@ class _DashboardState extends State<Dashboard> {
                         ],
                       ),
                     ),
+                    Container(
+                      height: 50,
+                      margin: EdgeInsets.symmetric(vertical: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: ButtonTheme(
+                        // minWidth: MediaQuery.of(context).size.width,
+                        minWidth: 350.0,
+                        height: 100.0,
+                        child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(8.0),
+                            // side: BorderSide(color: Colors.red)
+                          ),
+                          color: Color(0xfffe9263),
+                          onPressed: () => print("book helmet"),
+                          // onPressed: () => Navigator.push(context,
+                          //     MaterialPageRoute(builder: (context) => SignUpPage())),
+                          child: Text('Book Your Helmet',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400)),
+                        ),
+                      ),
+                    ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
-              
             ],
           ),
         ),
       ),
     );
   }
+  // //State class
+  // int _page = 0;
+  // GlobalKey _bottomNavigationKey = GlobalKey();
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //       bottomNavigationBar: CurvedNavigationBar(
+
+  //         height: 50,
+  //         key: _bottomNavigationKey,
+  //         items: <Widget>[
+  //           Icon(Icons.home, size: 30),
+  //           Icon(Icons.history, size: 30),
+  //           Icon(Icons.account_circle, size: 30),
+  //         ],
+  //         onTap: (index) {
+  //           setState(() {
+  //             _page = index;
+  //             if(index==0){
+  //               Container(color: Colors.teal,);
+  //             }
+  //              if(index==1){
+  //               Container(color: Colors.pink,);
+  //             }
+  //              if(index==2){
+  //               Container(color: Colors.red,child: Text("Check"),);
+  //             }
+
+  //           });
+  //         },
+  //       ),
+  //       body: Container(
+  //         color: Colors.blueAccent,
+  //         child: Center(
+  //           child: Column(
+  //             children: <Widget>[
+
+  //               Container(child: Text(_page.toString(), textScaleFactor: 10.0)),
+  //               RaisedButton(
+  //                 child: Text('Go To Page of index 1'),
+  //                 onPressed: () {
+  //                   //Page change using state does the same as clicking index 1 navigation button
+  //                   final CurvedNavigationBarState navBarState =
+  //                       _bottomNavigationKey.currentState;
+  //                   navBarState.setPage(1);
+  //                 },
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ));
+
+  // }
 }
