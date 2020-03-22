@@ -25,19 +25,6 @@ class _DashboardState extends State<Dashboard> {
           onTap: (index) {
             //Handle button tap
             print(index);
-            if (index == 0) {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Dashboard()));
-            } else if (index == 1) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => History(index: index),
-                ),
-              );
-            } else if (index == 2) {
-              print("About");
-            }
           },
         ),
         body: SingleChildScrollView(
@@ -46,17 +33,13 @@ class _DashboardState extends State<Dashboard> {
               Container(
                 padding: EdgeInsets.all(10.0),
                 // margin: EdgeInsets.fromLTRB(5, 10, 10,0),
-                width: double.infinity,
-                height: 301,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 2 - 70.0,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(30),
                       bottomRight: Radius.circular(30)),
-                  // gradient: LinearGradient(
-                  //     begin: Alignment.centerLeft,
-                  //     end: Alignment.centerRight,
-                  //     colors: [Color(0xfffe9263), Color(0xfff7892b)])
                 ),
                 child: Column(
                   // mainAxisAlignment: MainAxisAlignment.start,
@@ -93,12 +76,12 @@ class _DashboardState extends State<Dashboard> {
                                 Text(
                                   "10",
                                   style: TextStyle(
-                                      color: Color(0xfffe9263), fontSize: 40),
+                                      color: Color(0xfffe9263), fontSize: 30),
                                 ),
                                 Center(
                                   child: Text(
-                                    "Total\nHelmets",
-                                    style: TextStyle(fontSize: 20),
+                                    "   Total\nHelmets",
+                                    style: TextStyle(fontSize: 10),
                                   ),
                                 )
                               ],
@@ -110,17 +93,20 @@ class _DashboardState extends State<Dashboard> {
                                 Text(
                                   "10",
                                   style: TextStyle(
-                                      color: Color(0xfffe9263), fontSize: 40),
+                                      color: Color(0xfffe9263), fontSize: 30),
                                 ),
                                 Text(
                                   "Alloted\nHelmet",
-                                  style: TextStyle(fontSize: 20),
+                                  style: TextStyle(fontSize: 10),
                                 )
                               ],
                             ),
                           ),
                         ],
                       ),
+                    ),
+                    SizedBox(
+                      height: 5.0,
                     ),
                     Container(
                       height: 50,
@@ -135,12 +121,9 @@ class _DashboardState extends State<Dashboard> {
                         child: RaisedButton(
                           shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(8.0),
-                            // side: BorderSide(color: Colors.red)
                           ),
                           color: Color(0xfffe9263),
                           onPressed: () => print("book helmet"),
-                          // onPressed: () => Navigator.push(context,
-                          //     MaterialPageRoute(builder: (context) => SignUpPage())),
                           child: Text('Book Your Helmet',
                               style: TextStyle(
                                   color: Colors.white,
@@ -149,8 +132,6 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ),
                     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -160,15 +141,15 @@ class _DashboardState extends State<Dashboard> {
       ),
     );
   }
-  // //State class
+  //State class
   // int _page = 0;
   // GlobalKey _bottomNavigationKey = GlobalKey();
 
   // @override
   // Widget build(BuildContext context) {
   //   return Scaffold(
-  //       bottomNavigationBar: CurvedNavigationBar(
 
+  //       bottomNavigationBar: CurvedNavigationBar(
   //         height: 50,
   //         key: _bottomNavigationKey,
   //         items: <Widget>[
@@ -179,16 +160,6 @@ class _DashboardState extends State<Dashboard> {
   //         onTap: (index) {
   //           setState(() {
   //             _page = index;
-  //             if(index==0){
-  //               Container(color: Colors.teal,);
-  //             }
-  //              if(index==1){
-  //               Container(color: Colors.pink,);
-  //             }
-  //              if(index==2){
-  //               Container(color: Colors.red,child: Text("Check"),);
-  //             }
-
   //           });
   //         },
   //       ),
@@ -197,7 +168,6 @@ class _DashboardState extends State<Dashboard> {
   //         child: Center(
   //           child: Column(
   //             children: <Widget>[
-
   //               Container(child: Text(_page.toString(), textScaleFactor: 10.0)),
   //               RaisedButton(
   //                 child: Text('Go To Page of index 1'),
@@ -212,6 +182,5 @@ class _DashboardState extends State<Dashboard> {
   //           ),
   //         ),
   //       ));
-
   // }
 }

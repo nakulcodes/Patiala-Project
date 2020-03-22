@@ -17,7 +17,7 @@ class _HistoryState extends State<History> {
         backgroundColor: Color(0xfffe9263),
         bottomNavigationBar: CurvedNavigationBar(
           height: 50,
-          backgroundColor: Color(0xfffe9263),  
+          backgroundColor: Color(0xfffe9263),
           items: <Widget>[
             Icon(Icons.home, size: 30),
             Icon(Icons.history, size: 30),

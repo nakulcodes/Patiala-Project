@@ -116,26 +116,12 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget _title() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-          text: 'Register',
-          style: GoogleFonts.portLligatSans(
-            textStyle: Theme.of(context).textTheme.display1,
-            fontSize: 30,
-            fontWeight: FontWeight.w700,
-            color: Color(0xffe46b10),
-          ),
-          children: [
-            TextSpan(
-              text: ' Here',
-              style: TextStyle(color: Colors.black, fontSize: 30),
-            ),
-            // TextSpan(
-            //   text: 'rnz',
-            //   style: TextStyle(color: Color(0xffe46b10), fontSize: 30),
-            // ),
-          ]),
+    return Container(
+      height: 200,
+      width: 200,
+      child: Image(
+        image: AssetImage("assets/images/road.png"),
+      ),
     );
   }
 
@@ -158,6 +144,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
+          margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: <Widget>[
@@ -172,9 +159,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       child: SizedBox(),
                     ),
                     _title(),
-                    SizedBox(
-                      height: 50,
-                    ),
+                    // SizedBox(
+                    //   height: 50,
+                    // ),
                     _emailPasswordWidget(),
                     SizedBox(
                       height: 20,
