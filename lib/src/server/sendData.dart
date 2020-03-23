@@ -7,7 +7,7 @@ void loginCheck(BuildContext context, TextEditingController nameContro,
   String pass = passContro.text;
   String data = '{"email":"$name","password":"$pass"}';
 
-  var response = await http.post(loginApi, headers: headers, body: data);
+  var response = await http.post(userLogin, headers: headers, body: data);
   print(response.body);
   String resp = response.body;
 
