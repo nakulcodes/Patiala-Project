@@ -3,6 +3,7 @@ import 'package:flutter_login_signup/allFiles.dart';
 
 void loginCheck(BuildContext context, TextEditingController _nameContro,
     TextEditingController _passContro) async {
+  // AccountPerson acc = new AccountPerson();
   String name = _nameContro.text;
   String pass = _passContro.text;
   String data = '{"email":"$name","password":"$pass"}';
@@ -13,11 +14,18 @@ void loginCheck(BuildContext context, TextEditingController _nameContro,
 
   var respbody = json.decode(resp);
   print(respbody["status"]);
+  AccountPerson person = AccountPerson(
+      name: respbody['name'],
+      phone: respbody['phone'],
+      totalHelmet: respbody['total_helmets'],
+      availHelmet: respbody['available_helmets']);
   if (response.statusCode == 200) {
     if (respbody["status"] == "true") {
+      // print(person.namee);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Dashboard()));
     } else if (respbody["status"] == "false") {
+      // print(person.namee);
       Scaffold.of(context).showSnackBar(snackBarLogin);
 
       print("Error is Dashboard moving......");
@@ -48,22 +56,19 @@ void registerUser(
   var respbody = json.decode(resp);
   print(respbody["status"]);
   if (responseReg.statusCode == 200) {
-    // regNameData.clear();
-    // regEmailData.clear();
-    // regPhoneData.clear();
-    // regPassData.clear();
+    regNameData.clear();
+    regEmailData.clear();
+    regPhoneData.clear();
+    regPassData.clear();
     if (respbody["status"] == "true") {
       print("Registered.....");
       Scaffold.of(context1).showSnackBar(snackBarRegister);
-      
     }
     if (respbody["status"] == "false") {
       print("Error");
       Scaffold.of(context1).showSnackBar(snackBarError);
       // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
-      
 
-      
     }
   }
 }
