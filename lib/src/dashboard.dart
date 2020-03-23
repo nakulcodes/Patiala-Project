@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'history.dart';
+import 'Account.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -19,13 +20,26 @@ class _DashboardState extends State<Dashboard> {
           backgroundColor: Color(0xfffe9263),
           items: <Widget>[
             Icon(Icons.home, size: 30),
-            
             Icon(Icons.history, size: 30),
             Icon(Icons.account_circle, size: 30),
           ],
           onTap: (index) {
             //Handle button tap
             print(index);
+            if (index == 1) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => History(),
+                  ));
+            }
+            if (index == 2) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Account(),
+                  ));
+            }
           },
         ),
         body: SingleChildScrollView(

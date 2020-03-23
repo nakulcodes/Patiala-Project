@@ -1,23 +1,20 @@
-import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'dashboard.dart';
-import 'Account.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_login_signup/src/dashboard.dart';
+import 'history.dart';
 
-class History extends StatefulWidget {
-  int index;
-  History({this.index});
+class Account extends StatefulWidget {
   @override
-  _HistoryState createState() => _HistoryState();
+  _AccountState createState() => _AccountState();
 }
 
-class _HistoryState extends State<History> {
+class _AccountState extends State<Account> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xfffe9263),
         bottomNavigationBar: CurvedNavigationBar(
-          index: 1,
+          index: 2,
           height: 50,
           backgroundColor: Color(0xfffe9263),
           items: <Widget>[
@@ -28,32 +25,39 @@ class _HistoryState extends State<History> {
           onTap: (index) {
             //Handle button tap
             print(index);
-            if (index == 0) {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Dashboard()));
-            } else if (index == 2) {
+            if (index == 1) {
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Account(),
-                ),
-              );
-            } else if (index == 2) {
-              print("About");
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => History(
+                        // index: index,
+                        ),
+                  ));
+            } else if (index == 0) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Dashboard(
+                        // index: index,
+                        ),
+                  ));
             }
           },
         ),
+        backgroundColor: Color(0xfffe9263),
         body: Column(
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.height / 10,
+              height: MediaQuery.of(context).size.height /10,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(30),
                     bottomRight: Radius.circular(30)),
               ),
+              
             ),
+            Center(child: Text("MyAccount"),),
           ],
         ),
       ),
