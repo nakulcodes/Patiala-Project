@@ -1,11 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'dashboard.dart';
-import 'Account.dart';
+import 'package:flutter_login_signup/allFiles.dart';
 
 class History extends StatefulWidget {
-  int index;
-  History({this.index});
   @override
   _HistoryState createState() => _HistoryState();
 }
@@ -48,7 +43,7 @@ class _HistoryState extends State<History> {
           Container(
             padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 10-20,
+            height: MediaQuery.of(context).size.height / 10 - 20,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
@@ -63,7 +58,7 @@ class _HistoryState extends State<History> {
           ),
           Container(
             padding: EdgeInsets.only(
-              top: MediaQuery.of(context).size.height / 10 -10,
+              top: MediaQuery.of(context).size.height / 10 - 10,
             ),
             height: MediaQuery.of(context).size.height - 100,
             child: ListView.builder(

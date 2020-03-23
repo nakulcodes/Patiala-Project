@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:email_validator/email_validator.dart';
-import 'package:flutter_login_signup/src/screens/Account.dart';
 
 String pattern =
     r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';

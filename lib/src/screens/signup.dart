@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-// import 'package:flutter_login_signup/src/Widget/bezierContainer.dart';
-import 'package:flutter_login_signup/src/screens/loginPage.dart';
-// import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_login_signup/allFiles.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key key, this.title}) : super(key: key);

@@ -1,14 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_login_signup/src/screens/dashboard.dart';
-import 'package:flutter_login_signup/src/screens/signup.dart';
-import 'package:flutter_login_signup/src/bloc/bloc.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:flutter_login_signup/allFiles.dart';
+
 import 'package:flutter/services.dart';
 
 final nameContro = TextEditingController();
 final passContro = TextEditingController();
-final String loginApi = "https://hlmt.herokuapp.com/api/users/login";
+
 final snackBar = SnackBar(
   content: Text("Wrong Credentials.."),
 );
@@ -153,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: snapshot.hasData
                     ? () {
                         SystemChannels.textInput.invokeMethod('TextInput.hide');
-                        changeThePage(context);
+                        loginCheck(context, nameContro, passContro);
                       }
                     : null,
                 child: Text('Login',
@@ -334,34 +330,5 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-  }
-
-  void changeThePage(BuildContext context) async {
-    String name = nameContro.text;
-    String pass = passContro.text;
-    String data = '{"email":"$name","password":"$pass"}';
-    Map<String, String> headers = {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-    };
-
-    var response = await http.post(loginApi, headers: headers, body: data);
-    print(response.body);
-    String resp = response.body;
-
-    var respbody = json.decode(resp);
-    print(respbody["status"]);
-    if (response.statusCode == 200) {
-      if (respbody["status"] == "true") {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Dashboard()));
-      } else if (respbody["status"] == "false") {
-        Scaffold.of(context).showSnackBar(snackBar);
-
-        print("Comin......");
-
-        print("Error is Dashboard moving......");
-      }
-    }
   }
 }

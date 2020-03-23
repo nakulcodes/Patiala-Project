@@ -1,7 +1,4 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_login_signup/src/screens/dashboard.dart';
-import 'history.dart';
+import 'package:flutter_login_signup/allFiles.dart';
 
 class Account extends StatefulWidget {
   @override
