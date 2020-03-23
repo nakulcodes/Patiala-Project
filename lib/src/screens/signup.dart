@@ -1,4 +1,7 @@
 import 'package:flutter_login_signup/allFiles.dart';
+final snackBarRegister = SnackBar(
+  content: Text("Registered Sucesfully"),
+);
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key key, this.title}) : super(key: key);
@@ -57,25 +60,26 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _submitButton() {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xfffe9263), Color(0xfff7892b)])),
-      child: Text(
-        'Register Now',
-        style: TextStyle(fontSize: 20, color: Colors.white),
+      height: 50,
+      margin: EdgeInsets.symmetric(vertical: 20),
+      child: ButtonTheme(
+        minWidth: MediaQuery.of(context).size.width - 20.0,
+        height: 100.0,
+        child: RaisedButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            // side: BorderSide(color: Colors.red)
+          ),
+          color: Color(0xfffe9263),
+          onPressed: () {
+            registerUser(context);
+          },
+          child: Text('Guest Login',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400)),
+        ),
       ),
     );
   }

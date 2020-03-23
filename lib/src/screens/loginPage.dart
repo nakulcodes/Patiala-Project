@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 final nameContro = TextEditingController();
 final passContro = TextEditingController();
 
-final snackBar = SnackBar(
+final snackBarLogin = SnackBar(
   content: Text("Wrong Credentials.."),
 );
 

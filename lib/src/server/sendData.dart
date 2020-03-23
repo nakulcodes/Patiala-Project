@@ -18,11 +18,15 @@ void loginCheck(BuildContext context, TextEditingController nameContro,
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Dashboard()));
     } else if (respbody["status"] == "false") {
-      Scaffold.of(context).showSnackBar(snackBar);
+      Scaffold.of(context).showSnackBar(snackBarLogin);
 
       print("Comin......");
 
       print("Error is Dashboard moving......");
     }
   }
+}
+
+void registerUser(BuildContext context) {
+  Scaffold.of(context).showSnackBar(snackBarRegister);
 }
