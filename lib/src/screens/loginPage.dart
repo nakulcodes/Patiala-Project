@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_login_signup/src/dashboard.dart';
-import 'package:flutter_login_signup/src/signup.dart';
-import 'bloc.dart';
+import 'package:flutter_login_signup/src/screens/dashboard.dart';
+import 'package:flutter_login_signup/src/screens/signup.dart';
+import 'package:flutter_login_signup/src/bloc/bloc.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter/services.dart';
 
 final nameContro = TextEditingController();
 final passContro = TextEditingController();
+final String loginApi = "https://hlmt.herokuapp.com/api/users/login";
+final snackBar = SnackBar(
+  content: Text("Wrong Credentials.."),
+);
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title}) : super(key: key);
@@ -16,11 +23,30 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final bloc = Bloc();
-  String _date = "Not set";
-  String _time = "Not set";
+  Bloc bloc = Bloc();
+  // final _scaffoldKey = GlobalKey<ScaffoldState>();
+  // Future<bool> checkData() async {
+  //   String name = nameContro.text;
+  //   String pass = passContro.text;
+  //   String data = '{"email":"$name","password":"$pass"}';
+  //   Map<String, String> headers = {
+  //     'Content-type': 'application/json',
+  //     'Accept': 'application/json',
+  //   };
 
-  Widget _emailField(String title) {
+  //   var response = await http.post(loginApi, headers: headers, body: data);
+  //   print(response.body);
+  //   var etrData = json.encode(response.body);
+  //   print(etrData);
+  //   if (etrData=="true") {
+  //     return true;
+  //   }
+  //   else{
+  //     return false;
+  //   }
+  // }
+
+  Widget _emailField(String title, {TextEditingController con}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -43,6 +69,10 @@ class _LoginPageState extends State<LoginPage> {
           StreamBuilder<String>(
             stream: bloc.email,
             builder: (context, snapshot) => TextField(
+              controller: con,
+              onSubmitted: (e) {
+                print(e);
+              },
               onChanged: bloc.emailChanged,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
@@ -60,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _passField(String title,
-      {bool isPassword = false, TextEditingController contr}) {
+      {bool isPassword = false, TextEditingController con}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -83,6 +113,10 @@ class _LoginPageState extends State<LoginPage> {
           StreamBuilder<String>(
             stream: bloc.password,
             builder: (context, snapshot) => TextField(
+              controller: con,
+              onSubmitted: (e) {
+                print(e);
+              },
               obscureText: true,
               onChanged: bloc.passwordChanged,
               keyboardType: TextInputType.emailAddress,
@@ -117,12 +151,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 color: Color(0xfffe9263),
                 onPressed: snapshot.hasData
-                    // print("Name:$nameContro,Pass:$passContro");
-                    // Navigator.push(
-                    //     context, MaterialPageRoute(builder: (context) => Dashboard()));
-                    // print(snapshot.hasData);
-                    // snapshot.hasData ? () {changeThePage(context);} : null;
-                    ? () => changeThePage(context)
+                    ? () {
+                        SystemChannels.textInput.invokeMethod('TextInput.hide');
+                        changeThePage(context);
+                      }
                     : null,
                 child: Text('Login',
                     style: TextStyle(
@@ -239,8 +271,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _emailField("Email id"),
-        _passField("Password", isPassword: true),
+        _emailField("Email id", con: nameContro),
+        _passField("Password", isPassword: true, con: passContro),
       ],
     );
   }
@@ -249,6 +281,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        // key: _scaffoldKey,
         body: SingleChildScrollView(
           child: Container(
             // height: MediaQuery.of(context).size.height-100,
@@ -303,9 +336,32 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  changeThePage(BuildContext context) {
-    print("object");
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Dashboard()));
+  void changeThePage(BuildContext context) async {
+    String name = nameContro.text;
+    String pass = passContro.text;
+    String data = '{"email":"$name","password":"$pass"}';
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    var response = await http.post(loginApi, headers: headers, body: data);
+    print(response.body);
+    String resp = response.body;
+
+    var respbody = json.decode(resp);
+    print(respbody["status"]);
+    if (response.statusCode == 200) {
+      if (respbody["status"] == "true") {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Dashboard()));
+      } else if (respbody["status"] == "false") {
+        Scaffold.of(context).showSnackBar(snackBar);
+
+        print("Comin......");
+
+        print("Error is Dashboard moving......");
+      }
+    }
   }
 }

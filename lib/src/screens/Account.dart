@@ -1,6 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_login_signup/src/dashboard.dart';
+import 'package:flutter_login_signup/src/screens/dashboard.dart';
 import 'history.dart';
 
 class Account extends StatefulWidget {
@@ -48,16 +48,17 @@ class _AccountState extends State<Account> {
         body: Column(
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.height /10,
+              height: MediaQuery.of(context).size.height / 10,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(30),
                     bottomRight: Radius.circular(30)),
               ),
-              
             ),
-            Center(child: Text("MyAccount"),),
+            Center(
+              child: Text("MyAccount"),
+            ),
           ],
         ),
       ),

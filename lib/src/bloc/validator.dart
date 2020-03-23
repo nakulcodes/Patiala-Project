@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter_login_signup/src/screens/Account.dart';
 
 String pattern =
     r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
@@ -21,6 +22,8 @@ mixin Validators {
       handleData: (password, sink) {
     if (regExp.hasMatch(password) == true) {
       sink.add(password);
+      // print(password);
+
     } else {
       sink.addError("Enter a valid password");
     }
