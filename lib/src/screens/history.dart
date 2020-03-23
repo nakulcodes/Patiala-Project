@@ -26,6 +26,7 @@ class _HistoryState extends State<History> {
           if (index == 0) {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => Dashboard()));
+            // Navigator.pop(context);
           } else if (index == 2) {
             Navigator.push(
               context,

@@ -1,6 +1,6 @@
 import 'package:flutter_login_signup/allFiles.dart';
 
-import 'package:flutter/services.dart';
+
 
 final nameContro = TextEditingController();
 final passContro = TextEditingController();
@@ -20,27 +20,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   Bloc bloc = Bloc();
-  // final _scaffoldKey = GlobalKey<ScaffoldState>();
-  // Future<bool> checkData() async {
-  //   String name = nameContro.text;
-  //   String pass = passContro.text;
-  //   String data = '{"email":"$name","password":"$pass"}';
-  //   Map<String, String> headers = {
-  //     'Content-type': 'application/json',
-  //     'Accept': 'application/json',
-  //   };
-
-  //   var response = await http.post(loginApi, headers: headers, body: data);
-  //   print(response.body);
-  //   var etrData = json.encode(response.body);
-  //   print(etrData);
-  //   if (etrData=="true") {
-  //     return true;
-  //   }
-  //   else{
-  //     return false;
-  //   }
-  // }
 
   Widget _emailField(String title, {TextEditingController con}) {
     return Container(
@@ -55,13 +34,6 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 10,
           ),
-          // TextFormField(
-          //     controller: contr,
-          //     obscureText: isPassword,
-          //     decoration: InputDecoration(
-          //         border: InputBorder.none,
-          //         fillColor: Color(0xfff3f3f4),
-          //         filled: true))
           StreamBuilder<String>(
             stream: bloc.email,
             builder: (context, snapshot) => TextField(
