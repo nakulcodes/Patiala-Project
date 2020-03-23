@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login_signup/src/dashboard.dart';
 import 'package:flutter_login_signup/src/signup.dart';
+import 'bloc.dart';
 
 final nameContro = TextEditingController();
 final passContro = TextEditingController();
@@ -15,10 +16,50 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final bloc = Bloc();
   String _date = "Not set";
   String _time = "Not set";
 
-  Widget _entryField(String title,
+  Widget _emailField(String title) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            title,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          // TextFormField(
+          //     controller: contr,
+          //     obscureText: isPassword,
+          //     decoration: InputDecoration(
+          //         border: InputBorder.none,
+          //         fillColor: Color(0xfff3f3f4),
+          //         filled: true))
+          StreamBuilder<String>(
+            stream: bloc.email,
+            builder: (context, snapshot) => TextField(
+              onChanged: bloc.emailChanged,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  fillColor: Color(0xfff3f3f4),
+                  filled: true,
+                  // hintText: "Enter email",
+                  // labelText: "Email",
+                  errorText: snapshot.error),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _passField(String title,
       {bool isPassword = false, TextEditingController contr}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -32,13 +73,28 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 10,
           ),
-          TextFormField(
-              controller: contr,
-              obscureText: isPassword,
+          // TextFormField(
+          //     controller: contr,
+          //     obscureText: isPassword,
+          //     decoration: InputDecoration(
+          //         border: InputBorder.none,
+          //         fillColor: Color(0xfff3f3f4),
+          //         filled: true))
+          StreamBuilder<String>(
+            stream: bloc.password,
+            builder: (context, snapshot) => TextField(
+              obscureText: true,
+              onChanged: bloc.passwordChanged,
+              keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                   border: InputBorder.none,
                   fillColor: Color(0xfff3f3f4),
-                  filled: true))
+                  filled: true,
+                  // hintText: "Enter password",
+                  // labelText: "password",
+                  errorText: snapshot.error),
+            ),
+          ),
         ],
       ),
     );
@@ -48,27 +104,34 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       height: 50,
       margin: EdgeInsets.symmetric(vertical: 20),
-      child: ButtonTheme(
-        minWidth: MediaQuery.of(context).size.width - 20.0,
-        height: 100.0,
-        child: RaisedButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            // side: BorderSide(color: Colors.red)
-          ),
-          color: Color(0xfffe9263),
-          onPressed: () {
-            print("Name:$nameContro,Pass:$passContro");
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => Dashboard()));
-          },
-          child: Text('Login',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400)),
-        ),
-      ),
+      child: StreamBuilder<bool>(
+          stream: bloc.submitCheck,
+          builder: (context, snapshot) {
+            return ButtonTheme(
+              minWidth: MediaQuery.of(context).size.width - 20.0,
+              height: 100.0,
+              child: RaisedButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  // side: BorderSide(color: Colors.red)
+                ),
+                color: Color(0xfffe9263),
+                onPressed: snapshot.hasData
+                    // print("Name:$nameContro,Pass:$passContro");
+                    // Navigator.push(
+                    //     context, MaterialPageRoute(builder: (context) => Dashboard()));
+                    // print(snapshot.hasData);
+                    // snapshot.hasData ? () {changeThePage(context);} : null;
+                    ? () => changeThePage(context)
+                    : null,
+                child: Text('Login',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400)),
+              ),
+            );
+          }),
     );
   }
 
@@ -176,8 +239,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("Email id", contr: nameContro),
-        _entryField("Password", isPassword: true, contr: passContro),
+        _emailField("Email id"),
+        _passField("Password", isPassword: true),
       ],
     );
   }
@@ -238,5 +301,11 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  changeThePage(BuildContext context) {
+    print("object");
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Dashboard()));
   }
 }

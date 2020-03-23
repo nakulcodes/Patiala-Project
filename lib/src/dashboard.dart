@@ -19,6 +19,7 @@ class _DashboardState extends State<Dashboard> {
           backgroundColor: Color(0xfffe9263),
           items: <Widget>[
             Icon(Icons.home, size: 30),
+            
             Icon(Icons.history, size: 30),
             Icon(Icons.account_circle, size: 30),
           ],
