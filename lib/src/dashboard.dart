@@ -10,6 +10,37 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   @override
+  Widget _avail() {
+    return Container(
+        height: 50,
+        margin: EdgeInsets.symmetric(vertical: 20),
+        child: ButtonTheme(
+          minWidth: MediaQuery.of(context).size.width - 20.0,
+          height: 100.0,
+          child: RaisedButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              // side: BorderSide(color: Colors.red)
+            ),
+            color: Colors.white,
+            onPressed: () => print("Name"),
+            // snapshot.hasData
+
+            // Navigator.push(
+            //     context, MaterialPageRoute(builder: (context) => Dashboard()));
+            // print(snapshot.hasData);
+            // snapshot.hasData ? () {changeThePage(context);} : null;
+            // ? () => changeThePage(context)
+            // : null,
+            child: Text('Check Availability',
+                style: TextStyle(
+                    color: Color(0xfffe9263),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400)),
+          ),
+        ));
+  }
+
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -49,7 +80,7 @@ class _DashboardState extends State<Dashboard> {
                 padding: EdgeInsets.all(10.0),
                 // margin: EdgeInsets.fromLTRB(5, 10, 10,0),
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 2 - 70.0,
+                height: MediaQuery.of(context).size.height / 2 - 110.0,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -96,7 +127,9 @@ class _DashboardState extends State<Dashboard> {
                                 Center(
                                   child: Text(
                                     "   Total\nHelmets",
-                                    style: TextStyle(fontSize: 10),
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 )
                               ],
@@ -112,7 +145,9 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                                 Text(
                                   "Alloted\nHelmet",
-                                  style: TextStyle(fontSize: 10),
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold),
                                 )
                               ],
                             ),
@@ -150,6 +185,39 @@ class _DashboardState extends State<Dashboard> {
                   ],
                 ),
               ),
+              _avail(),
+              Container(
+                child: ListView.builder(
+                    itemCount: 15,
+                    itemBuilder: (BuildContext context, int index) {
+                      return SingleChildScrollView(
+                        child: Container(
+                          child: Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                Card(
+                                  child: Container(
+                                    child: Text("Checking\nCheck"),
+                                    padding: const EdgeInsets.all(20.0),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                height: MediaQuery.of(context).size.height / 2 - 100,
+                margin: EdgeInsets.all(10),
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(8.0),
+                  ),
+                ),
+              )
             ],
           ),
         ),
