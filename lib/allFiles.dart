@@ -4,6 +4,7 @@ export 'src/screens/dashboard.dart';
 export 'src/screens/history.dart';
 export 'src/screens/loginPage.dart';
 export 'src/screens/signup.dart';
+export 'src/screens/guestLogin.dart';
 
 //Server exports
 export 'src/server/sendData.dart';
@@ -19,3 +20,5 @@ export 'package:flutter/material.dart';
 export 'package:curved_navigation_bar/curved_navigation_bar.dart';
 export 'dart:convert';
 export 'package:flutter/services.dart';
+
+export 'src/accDetails.dart';

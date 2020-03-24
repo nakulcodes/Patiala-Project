@@ -3,13 +3,13 @@ import 'package:flutter_login_signup/allFiles.dart';
 final snackBarRegister = SnackBar(
   content: Text("Registered Sucesfully"),
 );
-final snackBarError = SnackBar(
+final snackBarErrorReg= SnackBar(
   content: Text("You have already registered"),
 );
-TextEditingController regName = TextEditingController();
-TextEditingController regEmail = TextEditingController();
-TextEditingController regPhone = TextEditingController();
-TextEditingController regPass = TextEditingController();
+TextEditingController _regName = TextEditingController();
+TextEditingController _regEmail = TextEditingController();
+TextEditingController _regPhone = TextEditingController();
+TextEditingController _regPass = TextEditingController();
 Bloc bloc1 = Bloc();
 
 class SignUpPage extends StatefulWidget {
@@ -205,7 +205,7 @@ class _SignUpPageState extends State<SignUpPage> {
             print("Register Pressed");
             SystemChannels.textInput.invokeMethod('TextInput.hide');
 
-            registerUser(context, regName, regEmail, regPhone, regPass);
+            registerUser(context, _regName, _regEmail, _regPhone, _regPass);
             // Scaffold.of(context).showSnackBar(snackBarRegister);
           },
           child: Text('Register',
@@ -263,10 +263,10 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("Name", contro: regName),
-        _emailField("Email id", con: regEmail),
-        _numberField("Phone Number", con: regPhone),
-        _passField("Password", isPassword: true, con: regPass),
+        _entryField("Name", contro: _regName),
+        _emailField("Email id", con: _regEmail),
+        _numberField("Phone Number", con: _regPhone),
+        _passField("Password", isPassword: true, con: _regPass),
         // _entryField("Phone Number"),
         // _entryField("Email id"),
         // _entryField("Password", isPassword: true),

@@ -25,7 +25,7 @@ class _HistoryState extends State<History> {
           print(index);
           if (index == 0) {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => Dashboard()));
+                context, MaterialPageRoute(builder: (context) => Dashboard(count: 1,)));
             // Navigator.pop(context);
           } else if (index == 2) {
             Navigator.push(
@@ -44,7 +44,7 @@ class _HistoryState extends State<History> {
           Container(
             padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 10 - 20,
+            height: 60,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(

@@ -1,12 +1,37 @@
 import 'package:flutter_login_signup/allFiles.dart';
 
 class Dashboard extends StatefulWidget {
+  bool bottom;
+  AccountPerson perDash;
+  int count;
+  Dashboard({this.bottom, this.perDash, this.count});
   @override
   _DashboardState createState() => _DashboardState();
+  // bottom: bottom, perDash: perDash, count: count);
 }
 
 class _DashboardState extends State<Dashboard> {
-  @override
+  // get name => perDash.nameGet;
+  // get availHel => perDash.availHelmetNo;
+  // get totHel => perDash.availHelmetNo; if(name == null)
+
+  // q = name;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // if (count == 0) {
+  //   //   String name = perDash.nameGet;
+  //   //   q = name;
+  //   // }
+
+  //   // print(name);
+
+  //   print(perDash.nameGet);
+  //   print(perDash.availHelmetNo);
+  //   print(perDash.totalHelmetNo);
+  // }
+
   Widget _avail() {
     return Container(
         height: 50,
@@ -70,6 +95,7 @@ class _DashboardState extends State<Dashboard> {
             }
           },
         ),
+
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -77,7 +103,7 @@ class _DashboardState extends State<Dashboard> {
                 padding: EdgeInsets.all(10.0),
                 // margin: EdgeInsets.fromLTRB(5, 10, 10,0),
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 2 - 110.0,
+                height: MediaQuery.of(context).size.height / 4,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -88,11 +114,13 @@ class _DashboardState extends State<Dashboard> {
                   // mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Container(
+                      height: MediaQuery.of(context).size.height / 8 - 30,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           Text(
-                            "Hi! Nakul ",
+                            //!    "Hi! $name",
+                            "H",
                             style: TextStyle(color: Colors.black, fontSize: 30),
                             textAlign: TextAlign.left,
                           ),
@@ -110,6 +138,7 @@ class _DashboardState extends State<Dashboard> {
                       height: 30,
                     ),
                     Container(
+                      height: MediaQuery.of(context).size.height / 8 - 30,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
@@ -117,7 +146,8 @@ class _DashboardState extends State<Dashboard> {
                             child: Column(
                               children: <Widget>[
                                 Text(
-                                  "10",
+                                    //!    "Hi! $name",
+                            "H",
                                   style: TextStyle(
                                       color: Color(0xfffe9263), fontSize: 30),
                                 ),
@@ -136,7 +166,8 @@ class _DashboardState extends State<Dashboard> {
                             child: Column(
                               children: <Widget>[
                                 Text(
-                                  "10",
+                                    //!    "Hi! $name",
+                            "H",
                                   style: TextStyle(
                                       color: Color(0xfffe9263), fontSize: 30),
                                 ),
@@ -155,48 +186,51 @@ class _DashboardState extends State<Dashboard> {
                     SizedBox(
                       height: 5.0,
                     ),
-                    Container(
-                      height: 50,
-                      margin: EdgeInsets.symmetric(vertical: 20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: ButtonTheme(
-                        // minWidth: MediaQuery.of(context).size.width,
-                        minWidth: 350.0,
-                        height: 100.0,
-                        child: RaisedButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(8.0),
-                          ),
-                          color: Color(0xfffe9263),
-                          onPressed: () => print("book helmet"),
-                          child: Text('Book Your Helmet',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400)),
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   height: 50,
+                    //   margin: EdgeInsets.symmetric(vertical: 20),
+                    //   decoration: BoxDecoration(
+                    //     borderRadius: BorderRadius.all(Radius.circular(10)),
+                    //   ),
+                    //   child: ButtonTheme(
+                    //     // minWidth: MediaQuery.of(context).size.width,
+                    //     minWidth: 350.0,
+                    //     height: 100.0,
+                    //     child: RaisedButton(
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: new BorderRadius.circular(8.0),
+                    //       ),
+                    //       color: Color(0xfffe9263),
+                    //       onPressed: () => print("book helmet"),
+                    //       child: Text('Book Your Helmet',
+                    //           style: TextStyle(
+                    //               color: Colors.white,
+                    //               fontSize: 18,
+                    //               fontWeight: FontWeight.w400)),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
-              _avail(),
               Container(
+                height: MediaQuery.of(context).size.height / 2,
                 child: ListView.builder(
                     itemCount: 15,
                     itemBuilder: (BuildContext context, int index) {
                       return SingleChildScrollView(
                         child: Container(
+                          padding: const EdgeInsets.fromLTRB(5, 10, 10, 0),
+                          color: Colors.white,
                           child: Center(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
-                                Card(
-                                  child: Container(
-                                    child: Text("Checking\nCheck"),
-                                    padding: const EdgeInsets.all(20.0),
+                                ButtonTheme(
+                                  // padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                                  minWidth: double.infinity,
+                                  child: RaisedButton(
+                                    onPressed: () => print("object"),
                                   ),
                                 )
                               ],
@@ -205,7 +239,7 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       );
                     }),
-                height: MediaQuery.of(context).size.height / 2 - 100,
+                // height: MediaQuery.of(context).size.height / 2 - 100,
                 margin: EdgeInsets.all(10),
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
@@ -214,7 +248,8 @@ class _DashboardState extends State<Dashboard> {
                     Radius.circular(8.0),
                   ),
                 ),
-              )
+              ),
+              _avail(),
             ],
           ),
         ),

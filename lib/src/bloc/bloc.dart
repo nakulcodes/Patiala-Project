@@ -25,6 +25,10 @@ class Bloc extends Object with Validators implements BaseBloc {
         return true;
       });
 
+  // Stream<bool> get guestCheck => Rx.combineLatest(email ,(e) {
+  //   return true;
+  // });
+
   // submit() {
   //   print("xyx");
   // }

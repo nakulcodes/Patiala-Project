@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:http/http.dart' as http;
 import 'package:flutter_login_signup/allFiles.dart';
 
@@ -19,11 +21,24 @@ void loginCheck(BuildContext context, TextEditingController _nameContro,
       phone: respbody['phone'],
       totalHelmet: respbody['total_helmets'],
       availHelmet: respbody['available_helmets']);
+  
+  
+  
+  // var person = AccountPerson();
+
+  // person.nameSet = respbody['name'];
+  
   if (response.statusCode == 200) {
     if (respbody["status"] == "true") {
       // print(person.namee);
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Dashboard()));
+          context,
+          MaterialPageRoute(
+              builder: (context) => Dashboard(
+                    bottom: true,
+                    perDash: person,
+                    count:0,
+                  )));
     } else if (respbody["status"] == "false") {
       // print(person.namee);
       Scaffold.of(context).showSnackBar(snackBarLogin);
@@ -63,10 +78,58 @@ void registerUser(
     if (respbody["status"] == "true") {
       print("Registered.....");
       Scaffold.of(context1).showSnackBar(snackBarRegister);
+      Navigator.pop(context1);
     }
     if (respbody["status"] == "false") {
       print("Error");
-      Scaffold.of(context1).showSnackBar(snackBarError);
+      Scaffold.of(context1).showSnackBar(snackBarErrorReg);
+      // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
+
+    }
+  }
+}
+
+void sendGuestData(
+  BuildContext guestContext,
+  TextEditingController _guestNameData,
+  TextEditingController _guestEmailData,
+  TextEditingController _guestPhoneData,
+) async {
+  String nameGuest = _guestNameData.text;
+  String emailGuest = _guestEmailData.text;
+  String phoneGuest = _guestPhoneData.text;
+  print("$nameGuest,$emailGuest,$phoneGuest");
+  String dataGuest =
+      '{"phone": "$phoneGuest","name": "$nameGuest","email":"$emailGuest"}';
+  var responseGuest =
+      await http.post(guestLogin, headers: headers, body: dataGuest);
+  String respGuest = responseGuest.body;
+
+  var respbodyGuest = json.decode(respGuest);
+  // var personGuest = AccountPerson(
+  //     name: respbodyGuest['name'],
+  //     phone: "null",
+  //     totalHelmet: respbodyGuest['total_helmets'],
+  //     availHelmet: respbodyGuest['available_helmets']);
+  // personGuest.nameComing = respbodyGuest['name'];
+  if (responseGuest.statusCode == 200) {
+    _guestNameData.clear();
+    _guestEmailData.clear();
+    _guestPhoneData.clear();
+
+    if (respbodyGuest["status"] == "true") {
+      print("Registered.....");
+      Navigator.push(
+          guestContext,
+          MaterialPageRoute(
+              builder: (context) => Dashboard(
+                    bottom: false,
+                    // perDash: personGuest,
+                  )));
+    }
+    if (respbodyGuest["status"] == "false") {
+      print("Error");
+      Scaffold.of(guestContext).showSnackBar(snackBarErrorGuest);
       // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
 
     }

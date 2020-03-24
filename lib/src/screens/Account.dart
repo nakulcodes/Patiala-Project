@@ -36,6 +36,7 @@ class _AccountState extends State<Account> {
                   MaterialPageRoute(
                     builder: (context) => Dashboard(
                         // index: index,
+                        count: 1,
                         ),
                   ));
             }
@@ -45,7 +46,7 @@ class _AccountState extends State<Account> {
         body: Column(
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.height / 10,
+              height: 60,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(

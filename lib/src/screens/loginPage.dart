@@ -1,6 +1,5 @@
 import 'package:flutter_login_signup/allFiles.dart';
-
-
+import 'package:flutter_login_signup/src/screens/guestLogin.dart';
 
 final nameContro = TextEditingController();
 final passContro = TextEditingController();
@@ -182,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           color: Color(0xfffe9263),
           onPressed: () => Navigator.push(
-              context, MaterialPageRoute(builder: (context) => SignUpPage())),
+              context, MaterialPageRoute(builder: (context) => GuestLogin())),
           child: Text('Guest Login',
               style: TextStyle(
                   color: Colors.white,
@@ -269,9 +268,34 @@ class _LoginPageState extends State<LoginPage> {
                         height: 10,
                       ),
                       _emailPasswordWidget(),
-                      SizedBox(
-                        height: 10,
-                      ),
+                      // SizedBox(
+                      //   height: 5,
+                      // ),
+                      Container(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Container(
+                            child: Row(
+                              children: <Widget>[
+                                Radio(),
+                                Text("User"),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            child: Row(
+                              children: <Widget>[
+                                Radio(),
+                                Text("Manager"),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )),
+                      // SizedBox(
+                      //   height: 5,
+                      // ),
                       _submitButton(),
                       Container(
                         padding: EdgeInsets.symmetric(vertical: 5.0),
