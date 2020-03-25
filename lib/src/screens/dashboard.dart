@@ -14,6 +14,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   _DashboardState();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   List data;
   List hel;
@@ -21,6 +22,7 @@ class _DashboardState extends State<Dashboard> {
   String availUser;
   String totalUser;
   String check;
+  String number;
   bool bar;
   bool check1 = false;
   int r = 0;
@@ -89,6 +91,7 @@ class _DashboardState extends State<Dashboard> {
     var q = getUser();
     // data = q["banks"];
     nameUser = q["name"];
+    number = q["phone"];
     // var _responseData = getBankdataa();
 
     // availUser = q["available_helmets"];
@@ -117,25 +120,75 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Booking Status"),
+      content: Text("Your Helmet is Booked."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  void bookHelmetData(String data, BuildContext context) async {
+    print("$data is inside book helmet");
+print("$number");
+    var _body1 = '{"bank":"$data","type":"reg_user","phone":"$number"}';
+    var _helResp = await http.post(bookHelmet, headers: headers, body: _body1);
+    print(_helResp);
+    String _helRepStr = _helResp.body;
+
+    var _helMap = json.decode(_helRepStr);
+    print(_helMap);
+    if (_helResp.statusCode == 200) {
+      if (_helMap["status"] == "true") {
+        print("It's Here");
+        // _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Helmet Booked")));
+        showAlertDialog(context);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: check1
-            ? Scaffold(
-                backgroundColor: Color(0xfffe9263),
-                // backgroundColor: Colors.white,
-                bottomNavigationBar: bar ? _bottomNavBar() : null,
-                body: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      _topHome(),
-                      _listBuild(),
-                      _avail(),
-                      // !bar ?_logout(): null,
-                    ],
+            ? WillPopScope(
+              onWillPop: () async => false,
+                          child: Scaffold(
+                  key: _scaffoldKey,
+                  backgroundColor: Color(0xfffe9263),
+                  // backgroundColor: Colors.white,
+                  bottomNavigationBar: bar ? _bottomNavBar() : null,
+                  body: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        _topHome(),
+                        _listBuild(),
+                        _avail(context),
+                        // !bar ?_logout(): null,
+                      ],
+                    ),
                   ),
                 ),
-              )
+            )
             : ColorLoader5());
   }
 
@@ -331,7 +384,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _avail() {
+  Widget _avail(BuildContext context) {
     return Container(
         height: 50,
         margin: EdgeInsets.symmetric(vertical: 10),
@@ -344,7 +397,14 @@ class _DashboardState extends State<Dashboard> {
               // side: BorderSide(color: Colors.red)
             ),
             color: Colors.white,
-            onPressed: () => print("Name"),
+            onPressed: () {
+              String _id1 = data[getIndex()]["bank_id"];
+              print(_id1);
+              bookHelmetData(_id1, context);
+              setState(() {
+                r = 0;
+              });
+            },
             child: Text('Book Helmet',
                 style: TextStyle(
                     color: Color(0xfffe9263),

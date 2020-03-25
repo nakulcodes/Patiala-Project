@@ -4,6 +4,11 @@ void setIndex(int i) {
   _i = i;
 }
 
+
+int getIndex(){
+  return _i;
+}
+
 bool returnIndex(int count, int q) {
   print("$count returnIndexmain hun main");
   if (count > 0) {
