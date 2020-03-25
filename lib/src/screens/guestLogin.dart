@@ -4,7 +4,7 @@ final TextEditingController _guestName = TextEditingController();
 final TextEditingController _guestEmail = TextEditingController();
 final TextEditingController _guestNumber = TextEditingController();
 Bloc bloc = new Bloc();
-final snackBarErrorGuest= SnackBar(
+final snackBarErrorGuest = SnackBar(
   content: Text("Error!Try Again Later"),
 );
 
@@ -85,7 +85,7 @@ class _GuestLoginState extends State<GuestLogin> {
           ),
           color: Color(0xfffe9263),
           onPressed: () {
-            print("Register Pressed");
+            print("Guest Login Pressed");
             // SystemChannels.textInput.invokeMethod('TextInput.hide');
             sendGuestData(context, _guestName, _guestEmail, _guestNumber);
 

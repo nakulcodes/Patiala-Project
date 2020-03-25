@@ -15,30 +15,15 @@ void loginCheck(BuildContext context, TextEditingController _nameContro,
   String resp = response.body;
 
   var respbody = json.decode(resp);
-  print(respbody["status"]);
-  AccountPerson person = AccountPerson(
-      name: respbody['name'],
-      phone: respbody['phone'],
-      totalHelmet: respbody['total_helmets'],
-      availHelmet: respbody['available_helmets']);
-  
-  
-  
-  // var person = AccountPerson();
 
-  // person.nameSet = respbody['name'];
-  
+  print(respbody["status"]);
+  setUser(respbody);
+
   if (response.statusCode == 200) {
     if (respbody["status"] == "true") {
       // print(person.namee);
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Dashboard(
-                    bottom: true,
-                    perDash: person,
-                    count:0,
-                  )));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => Dashboard(bar: true)));
     } else if (respbody["status"] == "false") {
       // print(person.namee);
       Scaffold.of(context).showSnackBar(snackBarLogin);
@@ -106,26 +91,19 @@ void sendGuestData(
   String respGuest = responseGuest.body;
 
   var respbodyGuest = json.decode(respGuest);
-  // var personGuest = AccountPerson(
-  //     name: respbodyGuest['name'],
-  //     phone: "null",
-  //     totalHelmet: respbodyGuest['total_helmets'],
-  //     availHelmet: respbodyGuest['available_helmets']);
-  // personGuest.nameComing = respbodyGuest['name'];
+
+  setUser(respbodyGuest);
+
   if (responseGuest.statusCode == 200) {
     _guestNameData.clear();
     _guestEmailData.clear();
     _guestPhoneData.clear();
+    print(respbodyGuest);
 
     if (respbodyGuest["status"] == "true") {
       print("Registered.....");
-      Navigator.push(
-          guestContext,
-          MaterialPageRoute(
-              builder: (context) => Dashboard(
-                    bottom: false,
-                    // perDash: personGuest,
-                  )));
+      Navigator.push(guestContext,
+          MaterialPageRoute(builder: (context) => Dashboard(bar: false)));
     }
     if (respbodyGuest["status"] == "false") {
       print("Error");

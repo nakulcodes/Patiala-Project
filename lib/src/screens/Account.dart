@@ -36,7 +36,7 @@ class _AccountState extends State<Account> {
                   MaterialPageRoute(
                     builder: (context) => Dashboard(
                         // index: index,
-                        count: 1,
+
                         ),
                   ));
             }
