@@ -124,7 +124,8 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: snapshot.hasData
                     ? () {
                         SystemChannels.textInput.invokeMethod('TextInput.hide');
-                        loginCheck(context, nameContro, passContro);
+                        // LoginLoader(context, nameContro, passContro);
+                        Navigator.push(context, MaterialPageRoute(builder:(context)=>LoginLoader(context, nameContro, passContro)));
                       }
                     : null,
                 child: Text('Login',

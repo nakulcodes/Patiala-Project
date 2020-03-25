@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       routes: {
         // When navigating to the "/" route, build the FirstScreen widget.
-        '0': (context) => Dashboard(),
+        // '0': (context) => Dashboard(),
         // When navigating to the "/second" route, build the SecondScreen widget.
         '1': (context) => History(),
       },

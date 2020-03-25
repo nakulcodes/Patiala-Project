@@ -1,57 +1,142 @@
 import 'package:flutter_login_signup/allFiles.dart';
+import 'package:flutter_login_signup/check.dart';
+import 'package:http/http.dart' as http;
 
 class Dashboard extends StatefulWidget {
-  
+  int q;
+  // BuildContext context;
+  // TextEditingController _nameContro;
+  // TextEditingController _passContro;
+  // Dashboard();
   _DashboardState createState() => _DashboardState();
   // bottom: bottom, perDash: perDash, count: count);
 }
 
 class _DashboardState extends State<Dashboard> {
+  _DashboardState();
+
   List data;
+  List hel;
   String nameUser;
   String availUser;
   String totalUser;
   String check;
   bool bar;
-  
+  bool check1 = false;
+  int r = 0;
+  int q;
 
   @override
   void initState() {
+    bar = isBar();
     super.initState();
+    // this.loginCheck();
+
+    print("$q this is q..........");
+    print("Cominggggggggggggggggggggggggggggggggggggggggggggg");
+    this.getBankdata();
     this.getUserData();
+
+    // if (q == 0) {
+    //   print(nameUser);
+    //   setState(() {
+    //     check1 = true;
+    //   });
+    // }
   }
+
+  // Future loginCheck() async {
+  //   // AccountPerson acc = new AccountPerson();
+  //   print("Coming.........");
+  //   String name = widget._nameContro.text;
+  //   String pass = widget._passContro.text;
+  //   String data = '{"email":"$name","password":"$pass"}';
+
+  //   var response = await http.post(userLogin, headers: headers, body: data);
+  //   print(response.body);
+  //   String resp = response.body;
+
+  //   var respbody = json.decode(resp);
+
+  //   print(respbody["status"]);
+
+  //   setUser(respbody, true);
+  //   if (response.statusCode == 200) {
+  //     if (respbody["status"] == "true") {
+  //       widget._nameContro.clear();
+  //       widget._passContro.clear();
+  //       print("..............................");
+
+  //       // print(person.namee);
+
+  //       // Navigator.push(
+  //       //     widget.context,
+  //       //     MaterialPageRoute(
+  //       //         builder: (context) => Dashboard(
+  //       //               q: 1,
+  //       //             )));
+  //     } else if (respbody["status"] == "false") {
+  //       // print(person.namee);
+  //       Navigator.pop(context);
+  //       // Scaffold.of(widget.context).showSnackBar(snackBarLogin);
+
+  //       print("Error is Dashboard moving......");
+  //     }
+  //   }
+  // }
 
   String getUserData() {
     var q = getUser();
-    data = q["banks"];
+    // data = q["banks"];
     nameUser = q["name"];
-    availUser = q["available_helmets"];
-    totalUser = q["total_helmets"];
-    check = data.length.toString();
-    bar = isBar();
+    // var _responseData = getBankdataa();
+
+    // availUser = q["available_helmets"];
+    // totalUser = q["total_helmets"];
+    // hel = q["helmets"];
+    // check = data.length.toString();
 
     return "Working.....";
+  }
+
+  void getBankdata() async {
+    var _response = await http.get(userBank, headers: headers);
+    print(_response.statusCode);
+    String _responseBody = _response.body;
+    var _responseData = json.decode(_responseBody);
+
+    if (_response.statusCode == 200) {
+      print("Banks are Working......");
+      // return _responseData;
+      availUser = _responseData["available_helmets"];
+      totalUser = _responseData["total_helmets"];
+      data = _responseData["banks"];
+      setState(() {
+        check1 = true;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color(0xfffe9263),
-        // backgroundColor: Colors.white,
-        bottomNavigationBar: bar ? _bottomNavBar() : null,
-        body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              _topHome(),
-              _listBuild(),
-              _avail(),
-              // !bar ?_logout(): null,
-            ],
-          ),
-        ),
-      ),
-    );
+        child: check1
+            ? Scaffold(
+                backgroundColor: Color(0xfffe9263),
+                // backgroundColor: Colors.white,
+                bottomNavigationBar: bar ? _bottomNavBar() : null,
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      _topHome(),
+                      _listBuild(),
+                      _avail(),
+                      // !bar ?_logout(): null,
+                    ],
+                  ),
+                ),
+              )
+            : ColorLoader5());
   }
 
   Widget _topHome() {
@@ -178,7 +263,8 @@ class _DashboardState extends State<Dashboard> {
           itemBuilder: (BuildContext context, int index) {
             return SingleChildScrollView(
               child: Container(
-                padding: const EdgeInsets.fromLTRB(5, 10, 10, 0),
+                margin: EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
                 color: Colors.white,
                 child: Center(
                   child: Column(
@@ -187,9 +273,44 @@ class _DashboardState extends State<Dashboard> {
                       ButtonTheme(
                         minWidth: double.infinity,
                         child: RaisedButton(
-                          onPressed: () => print("object"),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            // side: BorderSide(color: Colors.red)
+                          ),
+                          onPressed: () {
+                            print(index);
+                            setState(() {
+                              // pressAttention = !pressAttention;
+                              print(data[index]);
+
+                              setIndex(index);
+                              r++;
+                              print(r);
+                            });
+                          },
                           // child: Text(data[index]["banks"]),
-                          child: Text(data[index]),
+                          // child: Text(data[index]),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Container(
+                                  width: 40,
+                                  height: 50,
+                                  child: Image(
+                                    image:
+                                        AssetImage("assets/images/helmet.png"),
+                                  )),
+                              Column(
+                                children: <Widget>[
+                                  Text(data[index]["location"]),
+                                  Text(data[index]["helmets"])
+                                ],
+                              )
+                            ],
+                          ),
+                          color: returnIndex(r, index)
+                              ? (Colors.white)
+                              : (Color(0xfffe9263)),
                         ),
                       )
                     ],
@@ -224,15 +345,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             color: Colors.white,
             onPressed: () => print("Name"),
-            // snapshot.hasData
-
-            // Navigator.push(
-            //     context, MaterialPageRoute(builder: (context) => Dashboard()));
-            // print(snapshot.hasData);
-            // snapshot.hasData ? () {changeThePage(context);} : null;
-            // ? () => changeThePage(context)
-            // : null,
-            child: Text('Check Availability',
+            child: Text('Book Helmet',
                 style: TextStyle(
                     color: Color(0xfffe9263),
                     fontSize: 18,

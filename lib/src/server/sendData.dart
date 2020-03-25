@@ -1,40 +1,71 @@
-import 'dart:developer';
-
 import 'package:http/http.dart' as http;
+
 import 'package:flutter_login_signup/allFiles.dart';
 
-void loginCheck(BuildContext context, TextEditingController _nameContro,
-    TextEditingController _passContro) async {
-  // AccountPerson acc = new AccountPerson();
-  String name = _nameContro.text;
-  String pass = _passContro.text;
-  String data = '{"email":"$name","password":"$pass"}';
+class LoginLoader extends StatefulWidget {
+  BuildContext context;
+  TextEditingController _nameContro;
+  TextEditingController _passContro;
 
-  var response = await http.post(userLogin, headers: headers, body: data);
-  print(response.body);
-  String resp = response.body;
+  LoginLoader(this.context, this._nameContro, this._passContro);
 
-  var respbody = json.decode(resp);
+  @override
+  _LoginLoaderState createState() => _LoginLoaderState();
+}
 
-  print(respbody["status"]);
-  setUser(respbody, true);
+class _LoginLoaderState extends State<LoginLoader> {
+  void loginCheck() async {
 
-  if (response.statusCode == 200) {
-    if (respbody["status"] == "true") {
-      _nameContro.clear();
-      _passContro.clear();
-      _nameContro.dispose();
-      _passContro.dispose();
+    print("Coming.........");
+    String name = widget._nameContro.text;
+    String pass = widget._passContro.text;
+    String data = '{"email":"$name","password":"$pass"}';
 
-      // print(person.namee);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Dashboard()));
-    } else if (respbody["status"] == "false") {
-      // print(person.namee);
-      Scaffold.of(context).showSnackBar(snackBarLogin);
+    var response = await http.post(userLogin, headers: headers, body: data);
+    print(response.body);
+    String resp = response.body;
 
-      print("Error is Dashboard moving......");
+    var respbody = json.decode(resp);
+
+    print(respbody["status"]);
+    setUser(respbody, true);
+
+    if (response.statusCode == 200) {
+      if (respbody["status"] == "true") {
+        widget._nameContro.clear();
+        widget._passContro.clear();
+
+        // print(person.namee);
+
+        Navigator.push(
+            widget.context,
+            MaterialPageRoute(
+                builder: (context) => Dashboard(
+                      
+                    )));
+      } else if (respbody["status"] == "false") {
+        // print(person.namee);
+        Navigator.pop(context);
+        // Scaffold.of(widget.context).showSnackBar(snackBarLogin);
+
+        print("Error is Dashboard moving......");
+      }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loginCheck();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        body: ColorLoader5(),
+      ),
+    );
   }
 }
 
@@ -107,8 +138,8 @@ void sendGuestData(
 
     if (respbodyGuest["status"] == "true") {
       print("Registered.....");
-      Navigator.push(
-          guestContext, MaterialPageRoute(builder: (context) => Dashboard()));
+      // Navigator.push(
+      //     guestContext, MaterialPageRoute(builder: (context) => Dashboard()));
     }
     if (respbodyGuest["status"] == "false") {
       print("Error");

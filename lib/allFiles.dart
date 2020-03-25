@@ -5,10 +5,12 @@ export 'src/screens/history.dart';
 export 'src/screens/loginPage.dart';
 export 'src/screens/signup.dart';
 export 'src/screens/guestLogin.dart';
+export 'src/screens/loader.dart';
 
 //Server exports
 export 'src/server/sendData.dart';
 export 'src/server/endPoint.dart';
+export 'src/server/getData.dart';
 
 //Export BLoc
 export 'src/bloc/bloc.dart';
