@@ -17,13 +17,18 @@ void loginCheck(BuildContext context, TextEditingController _nameContro,
   var respbody = json.decode(resp);
 
   print(respbody["status"]);
-  setUser(respbody);
+  setUser(respbody, true);
 
   if (response.statusCode == 200) {
     if (respbody["status"] == "true") {
+      _nameContro.clear();
+      _passContro.clear();
+      _nameContro.dispose();
+      _passContro.dispose();
+
       // print(person.namee);
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => Dashboard(bar: true)));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Dashboard()));
     } else if (respbody["status"] == "false") {
       // print(person.namee);
       Scaffold.of(context).showSnackBar(snackBarLogin);
@@ -92,7 +97,7 @@ void sendGuestData(
 
   var respbodyGuest = json.decode(respGuest);
 
-  setUser(respbodyGuest);
+  setUser(respbodyGuest, false);
 
   if (responseGuest.statusCode == 200) {
     _guestNameData.clear();
@@ -102,8 +107,8 @@ void sendGuestData(
 
     if (respbodyGuest["status"] == "true") {
       print("Registered.....");
-      Navigator.push(guestContext,
-          MaterialPageRoute(builder: (context) => Dashboard(bar: false)));
+      Navigator.push(
+          guestContext, MaterialPageRoute(builder: (context) => Dashboard()));
     }
     if (respbodyGuest["status"] == "false") {
       print("Error");

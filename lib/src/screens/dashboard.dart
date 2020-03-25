@@ -1,9 +1,8 @@
 import 'package:flutter_login_signup/allFiles.dart';
 
 class Dashboard extends StatefulWidget {
-  bool bar;
-  Dashboard({this.bar});
-  _DashboardState createState() => _DashboardState(bar: bar);
+  
+  _DashboardState createState() => _DashboardState();
   // bottom: bottom, perDash: perDash, count: count);
 }
 
@@ -14,7 +13,7 @@ class _DashboardState extends State<Dashboard> {
   String totalUser;
   String check;
   bool bar;
-  _DashboardState({this.bar});
+  
 
   @override
   void initState() {
@@ -29,6 +28,7 @@ class _DashboardState extends State<Dashboard> {
     availUser = q["available_helmets"];
     totalUser = q["total_helmets"];
     check = data.length.toString();
+    bar = isBar();
 
     return "Working.....";
   }
@@ -39,13 +39,14 @@ class _DashboardState extends State<Dashboard> {
       child: Scaffold(
         backgroundColor: Color(0xfffe9263),
         // backgroundColor: Colors.white,
-        bottomNavigationBar: bar?_bottomNavBar():null,
+        bottomNavigationBar: bar ? _bottomNavBar() : null,
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               _topHome(),
               _listBuild(),
               _avail(),
+              // !bar ?_logout(): null,
             ],
           ),
         ),
@@ -212,7 +213,7 @@ class _DashboardState extends State<Dashboard> {
   Widget _avail() {
     return Container(
         height: 50,
-        margin: EdgeInsets.symmetric(vertical: 20),
+        margin: EdgeInsets.symmetric(vertical: 10),
         child: ButtonTheme(
           minWidth: MediaQuery.of(context).size.width - 20.0,
           height: 100.0,
@@ -253,7 +254,7 @@ class _DashboardState extends State<Dashboard> {
         //Handle button tap
         print(index);
         if (index == 1) {
-          Navigator.push(
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => History(),
@@ -268,5 +269,28 @@ class _DashboardState extends State<Dashboard> {
         }
       },
     );
+  }
+
+  Widget _logout() {
+    return Container(
+        height: 50,
+        // margin: EdgeInsets.symmetric(vertical: 20),
+        child: ButtonTheme(
+          minWidth: MediaQuery.of(context).size.width - 20.0,
+          height: 100.0,
+          child: RaisedButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              // side: BorderSide(color: Colors.red)
+            ),
+            color: Colors.white,
+            onPressed: () => Navigator.pop(context),
+            child: Text('Logout',
+                style: TextStyle(
+                    color: Color(0xfffe9263),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400)),
+          ),
+        ));
   }
 }

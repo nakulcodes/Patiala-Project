@@ -36,12 +36,19 @@
 // }
 
 Map<String,dynamic> _userDataa;
+bool _bar;
 
-void setUser(Map<String,dynamic> user) {
+void setUser(Map<String,dynamic> user,bool navBar) {
   _userDataa = user;
+  _bar = navBar;
 }
 
 
 Map<String,dynamic> getUser(){
   return _userDataa;
+  
+}
+
+bool isBar(){
+  return _bar;
 }

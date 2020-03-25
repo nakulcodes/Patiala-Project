@@ -19,6 +19,10 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   Bloc bloc = Bloc();
+  
+
+  
+ 
 
   Widget _emailField(String title, {TextEditingController con}) {
     return Container(
