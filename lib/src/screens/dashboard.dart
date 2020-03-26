@@ -149,7 +149,7 @@ class _DashboardState extends State<Dashboard> {
 
   void bookHelmetData(String data, BuildContext context) async {
     print("$data is inside book helmet");
-print("$number");
+    print("$number");
     var _body1 = '{"bank":"$data","type":"reg_user","phone":"$number"}';
     var _helResp = await http.post(bookHelmet, headers: headers, body: _body1);
     print(_helResp);
@@ -171,8 +171,8 @@ print("$number");
     return SafeArea(
         child: check1
             ? WillPopScope(
-              onWillPop: () async => false,
-                          child: Scaffold(
+                onWillPop: () async => false,
+                child: Scaffold(
                   key: _scaffoldKey,
                   backgroundColor: Color(0xfffe9263),
                   // backgroundColor: Colors.white,
@@ -188,7 +188,7 @@ print("$number");
                     ),
                   ),
                 ),
-            )
+              )
             : ColorLoader5());
   }
 

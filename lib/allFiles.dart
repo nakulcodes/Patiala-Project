@@ -6,6 +6,7 @@ export 'src/screens/loginPage.dart';
 export 'src/screens/signup.dart';
 export 'src/screens/guestLogin.dart';
 export 'src/screens/loader.dart';
+export 'src/screens/manager.dart';
 
 //Server exports
 export 'src/server/sendData.dart';

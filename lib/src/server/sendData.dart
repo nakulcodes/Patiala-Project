@@ -1,21 +1,21 @@
+import 'package:flutter_login_signup/src/screens/manager.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter_login_signup/allFiles.dart';
 
-class LoginLoader extends StatefulWidget {
+class LoginLoaderUser extends StatefulWidget {
   BuildContext context;
   TextEditingController _nameContro;
   TextEditingController _passContro;
 
-  LoginLoader(this.context, this._nameContro, this._passContro);
+  LoginLoaderUser(this.context, this._nameContro, this._passContro);
 
   @override
-  _LoginLoaderState createState() => _LoginLoaderState();
+  _LoginLoaderUserState createState() => _LoginLoaderUserState();
 }
 
-class _LoginLoaderState extends State<LoginLoader> {
+class _LoginLoaderUserState extends State<LoginLoaderUser> {
   void loginCheck() async {
-
     print("Coming.........");
     String name = widget._nameContro.text;
     String pass = widget._passContro.text;
@@ -37,12 +37,8 @@ class _LoginLoaderState extends State<LoginLoader> {
 
         // print(person.namee);
 
-        Navigator.push(
-            widget.context,
-            MaterialPageRoute(
-                builder: (context) => Dashboard(
-                      
-                    )));
+        Navigator.push(widget.context,
+            MaterialPageRoute(builder: (context) => Dashboard()));
       } else if (respbody["status"] == "false") {
         // print(person.namee);
         Navigator.pop(context);
@@ -59,6 +55,69 @@ class _LoginLoaderState extends State<LoginLoader> {
     loginCheck();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        body: ColorLoader5(),
+      ),
+    );
+  }
+}
+
+class LoginLoaderManager extends StatefulWidget {
+BuildContext context;
+  TextEditingController _nameContro;
+  TextEditingController _passContro;
+
+  LoginLoaderManager(this.context, this._nameContro, this._passContro);
+  @override
+  _LoginLoaderManagerState createState() => _LoginLoaderManagerState();
+}
+
+class _LoginLoaderManagerState extends State<LoginLoaderManager> {
+
+  void managerLoginCheck() async{
+  print("Coming......... inside Manager Login Check");
+    String name = widget._nameContro.text;
+    String pass = widget._passContro.text;
+    String data = '{"email":"$name","password":"$pass"}';
+
+    var response = await http.post(managerLogin, headers: headers, body: data);
+    print(response.body);
+    String resp = response.body;
+
+    var respbody = json.decode(resp);
+
+    print(respbody["status"]);
+    setUser(respbody, true);
+
+    if (response.statusCode == 200) {
+      if (respbody["status"] == "true") {
+        widget._nameContro.clear();
+        widget._passContro.clear();
+
+        // print(person.namee);
+
+        Navigator.push(widget.context,
+            MaterialPageRoute(builder: (context) => ManagerDashboard()));
+      } else if (respbody["status"] == "false") {
+        // print(person.namee);
+        Navigator.pop(context);
+        // Scaffold.of(widget.context).showSnackBar(snackBarLogin);
+
+        print("Error is Dashboard moving......");
+      }
+    }
+
+  }
+ 
+@override
+
+ void initState(){
+super.initState();
+managerLoginCheck();
+ }
   @override
   Widget build(BuildContext context) {
     return SafeArea(

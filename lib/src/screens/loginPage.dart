@@ -19,10 +19,18 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   Bloc bloc = Bloc();
-  
+  int selectedRadio = 0;
 
-  
- 
+  void initState() {
+    super.initState();
+    selectedRadio = 0;
+  }
+
+  setSelectedRadio(int val) {
+    setState(() {
+      selectedRadio = val;
+    });
+  }
 
   Widget _emailField(String title, {TextEditingController con}) {
     return Container(
@@ -125,7 +133,20 @@ class _LoginPageState extends State<LoginPage> {
                     ? () {
                         SystemChannels.textInput.invokeMethod('TextInput.hide');
                         // LoginLoader(context, nameContro, passContro);
-                        Navigator.push(context, MaterialPageRoute(builder:(context)=>LoginLoader(context, nameContro, passContro)));
+                        if (selectedRadio == 0) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginLoaderUser(
+                                      context, nameContro, passContro)));
+                        } else if (selectedRadio == 1) {
+                          print("YOu are a Manager...");
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginLoaderManager(
+                                      context, nameContro, passContro)));
+                        }
                       }
                     : null,
                 child: Text('Login',
@@ -283,7 +304,14 @@ class _LoginPageState extends State<LoginPage> {
                           Container(
                             child: Row(
                               children: <Widget>[
-                                Radio(),
+                                Radio(
+                                  value: 0,
+                                  groupValue: selectedRadio,
+                                  onChanged: (val) {
+                                    print(val);
+                                    setSelectedRadio(val);
+                                  },
+                                ),
                                 Text("User"),
                               ],
                             ),
@@ -291,7 +319,14 @@ class _LoginPageState extends State<LoginPage> {
                           Container(
                             child: Row(
                               children: <Widget>[
-                                Radio(),
+                                Radio(
+                                  value: 1,
+                                  groupValue: selectedRadio,
+                                  onChanged: (val) {
+                                    print(val);
+                                    setSelectedRadio(val);
+                                  },
+                                ),
                                 Text("Manager"),
                               ],
                             ),
