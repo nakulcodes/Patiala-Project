@@ -3,8 +3,11 @@ import 'package:flutter_login_signup/allFiles.dart';
 final snackBarRegister = SnackBar(
   content: Text("Registered Sucesfully"),
 );
-final snackBarErrorReg= SnackBar(
+final snackBarErrorReg = SnackBar(
   content: Text("You have already registered"),
+);
+final snackBarRegisterManager = SnackBar(
+  content: Text("You application is being Reviewed"),
 );
 TextEditingController _regName = TextEditingController();
 TextEditingController _regEmail = TextEditingController();
@@ -24,6 +27,19 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<ScaffoldState> scaffoldKeyReg =
       new GlobalKey<ScaffoldState>();
+  int selectedRadio;
+
+  void initState() {
+    super.initState();
+    selectedRadio = 0;
+  }
+
+  setSelectedRadio(int val) {
+    setState(() {
+      selectedRadio = val;
+    });
+  }
+
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -205,7 +221,14 @@ class _SignUpPageState extends State<SignUpPage> {
             print("Register Pressed");
             SystemChannels.textInput.invokeMethod('TextInput.hide');
 
-            registerUser(context, _regName, _regEmail, _regPhone, _regPass);
+            if (selectedRadio == 0) {
+              registerUser(context, _regName, _regEmail, _regPhone, _regPass);
+            }
+          else if(selectedRadio ==1){
+            registerManager(context, _regName, _regEmail, _regPhone, _regPass);
+
+          }
+
             // Scaffold.of(context).showSnackBar(snackBarRegister);
           },
           child: Text('Register',
@@ -279,8 +302,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       body: Builder(
         builder: (context) => SingleChildScrollView(
-          child: 
-          Container(
+          child: Container(
             margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
             height: MediaQuery.of(context).size.height,
             child: Stack(
@@ -303,11 +325,48 @@ class _SignUpPageState extends State<SignUpPage> {
                       SizedBox(
                         height: 20,
                       ),
+                      Container(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Container(
+                            child: Row(
+                              children: <Widget>[
+                                Radio(
+                                  value: 0,
+                                  groupValue: selectedRadio,
+                                  onChanged: (val) {
+                                    print(val);
+                                    setSelectedRadio(val);
+                                  },
+                                ),
+                                Text("User"),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            child: Row(
+                              children: <Widget>[
+                                Radio(
+                                  value: 1,
+                                  groupValue: selectedRadio,
+                                  onChanged: (val) {
+                                    print(val);
+                                    setSelectedRadio(val);
+                                  },
+                                ),
+                                Text("Manager"),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )),
                       _submitButton(context),
                       Expanded(
                         flex: 2,
                         child: SizedBox(),
-                      )
+                      ),
+                      
                     ],
                   ),
                 ),

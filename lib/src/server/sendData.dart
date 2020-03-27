@@ -1,4 +1,4 @@
-import 'package:flutter_login_signup/src/screens/manager.dart';
+
 import 'package:http/http.dart' as http;
 
 import 'package:flutter_login_signup/allFiles.dart';
@@ -38,7 +38,7 @@ class _LoginLoaderUserState extends State<LoginLoaderUser> {
         // print(person.namee);
 
         Navigator.push(widget.context,
-            MaterialPageRoute(builder: (context) => Dashboard()));
+            MaterialPageRoute(builder: (context) => NavigationBar()));
       } else if (respbody["status"] == "false") {
         // print(person.namee);
         Navigator.pop(context);
@@ -66,7 +66,7 @@ class _LoginLoaderUserState extends State<LoginLoaderUser> {
 }
 
 class LoginLoaderManager extends StatefulWidget {
-BuildContext context;
+  BuildContext context;
   TextEditingController _nameContro;
   TextEditingController _passContro;
 
@@ -76,9 +76,8 @@ BuildContext context;
 }
 
 class _LoginLoaderManagerState extends State<LoginLoaderManager> {
-
-  void managerLoginCheck() async{
-  print("Coming......... inside Manager Login Check");
+  void managerLoginCheck() async {
+    print("Coming......... inside Manager Login Check");
     String name = widget._nameContro.text;
     String pass = widget._passContro.text;
     String data = '{"email":"$name","password":"$pass"}';
@@ -99,8 +98,8 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
 
         // print(person.namee);
 
-        Navigator.push(widget.context,
-            MaterialPageRoute(builder: (context) => ManagerDashboard()));
+        // Navigator.push(widget.context,
+        //     MaterialPageRoute(builder: (context) => ChatPage()));
       } else if (respbody["status"] == "false") {
         // print(person.namee);
         Navigator.pop(context);
@@ -109,15 +108,14 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
         print("Error is Dashboard moving......");
       }
     }
-
   }
- 
-@override
 
- void initState(){
-super.initState();
-managerLoginCheck();
- }
+  @override
+  void initState() {
+    super.initState();
+    managerLoginCheck();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -168,6 +166,47 @@ void registerUser(
     }
   }
 }
+void registerManager(
+    BuildContext context1,
+    TextEditingController regNameData,
+    TextEditingController regEmailData,
+    TextEditingController regPhoneData,
+    TextEditingController regPassData) async {
+  // Scaffold.of(context).showSnackBar(snackBarRegister);
+  String nameReg = regNameData.text;
+  String emailReg = regEmailData.text;
+  String phoneReg = regPhoneData.text;
+  String passReg = regPassData.text;
+
+  print("$nameReg+$emailReg+$phoneReg+$passReg");
+  String dataReg =
+      '{"phone": "$phoneReg","name": "$nameReg","password":"$passReg","DOB":"null","email":"$emailReg","s3_link":"null"}';
+
+  var responseReg =
+  await http.post(managerRegister, headers: headers, body: dataReg);
+  String resp = responseReg.body;
+
+  var respbody = json.decode(resp);
+  print(respbody["status"]);
+  print(respbody);
+  if (responseReg.statusCode == 200) {
+    regNameData.clear();
+    regEmailData.clear();
+    regPhoneData.clear();
+    regPassData.clear();
+    if (respbody["status"] == "true") {
+      print("Registered.....");
+      Scaffold.of(context1).showSnackBar(snackBarRegisterManager);
+      Navigator.pop(context1);
+    }
+    if (respbody["status"] == "false") {
+      print("Error");
+      Scaffold.of(context1).showSnackBar(SnackBar(content: Text("Error in Registering as Manager...."),));
+      // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
+
+    }
+  }
+}
 
 void sendGuestData(
   BuildContext guestContext,
@@ -196,9 +235,9 @@ void sendGuestData(
     print(respbodyGuest);
 
     if (respbodyGuest["status"] == "true") {
-      print("Registered.....");
-      // Navigator.push(
-      //     guestContext, MaterialPageRoute(builder: (context) => Dashboard()));
+      print("GUesst Dataa");
+      Navigator.push(
+          guestContext, MaterialPageRoute(builder: (context) => Dashboard()));
     }
     if (respbodyGuest["status"] == "false") {
       print("Error");

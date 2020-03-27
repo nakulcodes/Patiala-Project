@@ -28,6 +28,7 @@ dependencies:
   flutter_datetime_picker: 1.2.5
   curved_navigation_bar: ^0.3.2
   rxdart: ^0.23.1
+  flutter_socket_io: ^0.6.0
   # email_validator: '^1.0.0
 
 

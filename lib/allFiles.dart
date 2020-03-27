@@ -7,7 +7,7 @@ export 'src/screens/signup.dart';
 export 'src/screens/guestLogin.dart';
 export 'src/screens/loader.dart';
 export 'src/screens/manager.dart';
-
+export 'src/screens/navBar.dart';
 //Server exports
 export 'src/server/sendData.dart';
 export 'src/server/endPoint.dart';
@@ -25,3 +25,6 @@ export 'dart:convert';
 export 'package:flutter/services.dart';
 
 export 'src/accDetails.dart';
+
+export 'package:flutter_socket_io/flutter_socket_io.dart';
+export 'package:flutter_socket_io/socket_io_manager.dart';

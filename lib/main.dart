@@ -23,6 +23,8 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: LoginPage(),
+      // home:ChatPage(),
+      // home: ManagerDashboard(),
     );
   }
 }

@@ -176,7 +176,7 @@ class _DashboardState extends State<Dashboard> {
                   key: _scaffoldKey,
                   backgroundColor: Color(0xfffe9263),
                   // backgroundColor: Colors.white,
-                  bottomNavigationBar: bar ? _bottomNavBar() : null,
+                  // bottomNavigationBar: bar ? _bottomNavBar() : null,
                   body: SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
