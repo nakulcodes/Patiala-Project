@@ -84,7 +84,7 @@ class _HistoryState extends State<History> {
                                 _toShow.length == null ? 0 : _toShow.length,
                             itemBuilder: (BuildContext context, int index) {
                               return SingleChildScrollView(
-                                  child: Card(
+                              child: Card(
                                 child: Container(
                                   padding: const EdgeInsets.all(15.0),
                                   child: Row(
@@ -124,14 +124,24 @@ class _HistoryState extends State<History> {
                                                   ? Row(
                                                       children: <Widget>[
                                                         Text('Pick Time: '),
-                                                        Text(
-                                                          _toShow[index][
-                                                              "return_datetime"],
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
+                                                        _toShow[index][
+                                                                    "issue_datetime"] ==
+                                                                "null"
+                                                            ? Text(
+                                                                "Not Approved",
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              )
+                                                            : Text(
+                                                                _toShow[index][
+                                                                    "issue_datetime"],
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
                                                       ],
                                                     )
                                                   : Text("Request Declined")
@@ -181,11 +191,9 @@ class _HistoryState extends State<History> {
                             })
                         : Center(
                             child: Text(
-                          
                             "No History.\nMake your First Booking",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                
                                 color: Colors.white,
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold),

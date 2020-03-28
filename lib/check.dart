@@ -1,7 +1,12 @@
-int _i;
+int _i ;
 
-void setIndex(int i) {
+bool setIndex(int i) {
+  if(i==_i){
+    // _i =0;
+    return false;
+  }
   _i = i;
+  return true;
 }
 
 

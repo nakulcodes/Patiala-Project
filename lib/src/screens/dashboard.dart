@@ -189,9 +189,11 @@ class _DashboardState extends State<Dashboard> {
                     child: Column(
                       children: <Widget>[
                         _topHome(),
+                        SizedBox(
+                          width: 12,
+                        ),
                         _listBuild(),
                         _avail(context),
-                        // !bar ?_logout(): null,
                       ],
                     ),
                   ),
@@ -287,30 +289,6 @@ class _DashboardState extends State<Dashboard> {
           SizedBox(
             height: 5.0,
           ),
-          // Container(
-          //   height: 50,
-          //   margin: EdgeInsets.symmetric(vertical: 20),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.all(Radius.circular(10)),
-          //   ),
-          //   child: ButtonTheme(
-          //     // minWidth: MediaQuery.of(context).size.width,
-          //     minWidth: 350.0,
-          //     height: 100.0,
-          //     child: RaisedButton(
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: new BorderRadius.circular(8.0),
-          //       ),
-          //       color: Color(0xfffe9263),
-          //       onPressed: () => print("book helmet"),
-          //       child: Text('Book Your Helmet',
-          //           style: TextStyle(
-          //               color: Colors.white,
-          //               fontSize: 18,
-          //               fontWeight: FontWeight.w400)),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
@@ -318,77 +296,87 @@ class _DashboardState extends State<Dashboard> {
 
   Widget _listBuild() {
     return Container(
-      height: MediaQuery.of(context).size.height / 2,
+      decoration: BoxDecoration(
+        color: Color(0xfffe9263),
+      ),
+      height: MediaQuery.of(context).size.height / 1.9,
       child: ListView.builder(
           itemCount: data == null ? 0 : data.length,
+          padding: EdgeInsets.all(5),
           itemBuilder: (BuildContext context, int index) {
             return SingleChildScrollView(
-              child: Container(
-                margin: EdgeInsets.only(bottom: 10),
-                padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
-                color: Colors.white,
-                child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      ButtonTheme(
-                        minWidth: double.infinity,
-                        child: RaisedButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            // side: BorderSide(color: Colors.red)
-                          ),
-                          onPressed: () {
-                            print(index);
-                            setState(() {
-                              // pressAttention = !pressAttention;
-                              print(data[index]);
+                child: Card(
+              color:
+                  returnIndex(r, index) ? (Color(0xfffeb89a)) : (Colors.white),
+              child: InkWell(
+                onTap: () {
+                  print(index);
+                  bool i = setIndex(index);
+                  print("\n\n\n\n\n");
+                  print(i);
+                  setState(() {
+                    print(data[index]);
 
-                              setIndex(index);
-                              r++;
-                              print(r);
-                            });
-                          },
-                          // child: Text(data[index]["banks"]),
-                          // child: Text(data[index]),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                  width: 40,
-                                  height: 50,
-                                  child: Image(
-                                    image:
-                                        AssetImage("assets/images/helmet.png"),
-                                  )),
-                              Column(
-                                children: <Widget>[
-                                  Text(data[index]["location"]),
-                                  Text(data[index]["helmets"])
-                                ],
-                              )
-                            ],
-                          ),
-                          color: returnIndex(r, index)
-                              ? (Colors.white)
-                              : (Color(0xfffe9263)),
+                    if (i == true) {
+                      r++;
+                      print(r);
+                    }
+                    if (i == false) {
+                      r = 0;
+                    }
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              data[index]["location"],
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                          ]),
+                      Row(children: <Widget>[
+                        Text(data[index]["helmets"],style: TextStyle(fontSize: 25),),
+                        SizedBox(
+                          width: 10,
                         ),
-                      )
+                        int.parse(data[index]["helmets"]) > 12
+                            ? Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    shape: BoxShape.circle),
+                              )
+                            : int.parse(data[index]["helmets"]) > 6
+                                ? Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                        color: Colors.yellow,
+                                        shape: BoxShape.circle),
+                                  )
+                                : Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle),
+                                  )
+                      ])
                     ],
                   ),
                 ),
               ),
-            );
+            ));
           }),
       // height: MediaQuery.of(context).size.height / 2 - 100,
-      margin: EdgeInsets.all(10),
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(
-          Radius.circular(8.0),
-        ),
-      ),
     );
   }
 
@@ -405,73 +393,75 @@ class _DashboardState extends State<Dashboard> {
               // side: BorderSide(color: Colors.red)
             ),
             color: Colors.white,
-            onPressed: () {
-              String _id1 = data[getIndex()]["bank_id"];
-              print(_id1);
-              bookHelmetData(_id1, context);
-              setState(() {
-                r = 0;
-              });
-            },
+            onPressed: r != 0
+                ? () {
+                    String _id1 = data[getIndex()]["bank_id"];
+                    print(_id1);
+                    bookHelmetData(_id1, context);
+                    setState(() {
+                      r = 0;
+                    });
+                  }
+                : null,
             child: Text('Book Helmet',
                 style: TextStyle(
-                    color: Color(0xfffe9263),
+                    color: Colors.black,
                     fontSize: 18,
                     fontWeight: FontWeight.w400)),
           ),
         ));
   }
 
-  Widget _bottomNavBar() {
-    return CurvedNavigationBar(
-      height: 50,
-      backgroundColor: Color(0xfffe9263),
-      items: <Widget>[
-        Icon(Icons.home, size: 30),
-        Icon(Icons.history, size: 30),
-        Icon(Icons.account_circle, size: 30),
-      ],
-      onTap: (index) {
-        //Handle button tap
-        print(index);
-        if (index == 1) {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => History(),
-              ));
-        }
-        if (index == 2) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Account(),
-              ));
-        }
-      },
-    );
-  }
+  // Widget _bottomNavBar() {
+  //   return CurvedNavigationBar(
+  //     height: 50,
+  //     backgroundColor: Color(0xfffe9263),
+  //     items: <Widget>[
+  //       Icon(Icons.home, size: 30),
+  //       Icon(Icons.history, size: 30),
+  //       Icon(Icons.account_circle, size: 30),
+  //     ],
+  //     onTap: (index) {
+  //       //Handle button tap
+  //       print(index);
+  //       if (index == 1) {
+  //         Navigator.pushReplacement(
+  //             context,
+  //             MaterialPageRoute(
+  //               builder: (context) => History(),
+  //             ));
+  //       }
+  //       if (index == 2) {
+  //         Navigator.push(
+  //             context,
+  //             MaterialPageRoute(
+  //               builder: (context) => Account(),
+  //             ));
+  //       }
+  //     },
+  //   );
+  // }
 
-  Widget _logout() {
-    return Container(
-        height: 50,
-        // margin: EdgeInsets.symmetric(vertical: 20),
-        child: ButtonTheme(
-          minWidth: MediaQuery.of(context).size.width - 20.0,
-          height: 100.0,
-          child: RaisedButton(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              // side: BorderSide(color: Colors.red)
-            ),
-            color: Colors.white,
-            onPressed: () => Navigator.pop(context),
-            child: Text('Logout',
-                style: TextStyle(
-                    color: Color(0xfffe9263),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w400)),
-          ),
-        ));
-  }
+  // Widget _logout() {
+  //   return Container(
+  //       height: 50,
+  //       // margin: EdgeInsets.symmetric(vertical: 20),
+  //       child: ButtonTheme(
+  //         minWidth: MediaQuery.of(context).size.width - 20.0,
+  //         height: 100.0,
+  //         child: RaisedButton(
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(8.0),
+  //             // side: BorderSide(color: Colors.red)
+  //           ),
+  //           color: Colors.white,
+  //           onPressed: () => Navigator.pop(context),
+  //           child: Text('Logout',
+  //               style: TextStyle(
+  //                   color: Color(0xfffe9263),
+  //                   fontSize: 18,
+  //                   fontWeight: FontWeight.w400)),
+  //         ),
+  //       ));
+  // }
 }
