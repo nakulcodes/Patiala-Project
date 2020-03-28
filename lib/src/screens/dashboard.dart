@@ -1,5 +1,6 @@
 import 'package:flutter_login_signup/allFiles.dart';
 import 'package:flutter_login_signup/check.dart';
+import 'package:flutter_login_signup/src/screens/storedata.dart';
 import 'package:http/http.dart' as http;
 
 class Dashboard extends StatefulWidget {
@@ -38,6 +39,7 @@ class _DashboardState extends State<Dashboard> {
     print("Cominggggggggggggggggggggggggggggggggggggggggggggg");
     this.getBankdata();
     this.getUserData();
+    setMobile(number);
 
     // if (q == 0) {
     //   print(nameUser);
@@ -92,6 +94,7 @@ class _DashboardState extends State<Dashboard> {
     // data = q["banks"];
     nameUser = q["name"];
     number = q["phone"];
+
     // var _responseData = getBankdataa();
 
     // availUser = q["available_helmets"];
@@ -120,7 +123,8 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  showAlertDialog(BuildContext context) {
+  showAlertDialog(BuildContext context, String title) {
+    // String title;
     // set up the button
     Widget okButton = FlatButton(
       child: Text("OK"),
@@ -131,8 +135,9 @@ class _DashboardState extends State<Dashboard> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
+      backgroundColor: Colors.white,
       title: Text("Booking Status"),
-      content: Text("Your Helmet is Booked."),
+      content: Text(title),
       actions: [
         okButton,
       ],
@@ -161,7 +166,10 @@ class _DashboardState extends State<Dashboard> {
       if (_helMap["status"] == "true") {
         print("It's Here");
         // _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Helmet Booked")));
-        showAlertDialog(context);
+        showAlertDialog(context, "Your Helmet is Booked.");
+      } else if (_helMap["status"] == "false") {
+        print("It's Here Booked Helmet");
+        showAlertDialog(context, "You already have a helmet is possesion.");
       }
     }
   }
@@ -213,7 +221,7 @@ class _DashboardState extends State<Dashboard> {
               children: <Widget>[
                 Text(
                   //!    "Hi! $name",
-                  "Hi!  $nameUser",
+                  "Hi! $nameUser",
                   style: TextStyle(color: Colors.black, fontSize: 30),
                   textAlign: TextAlign.left,
                 ),

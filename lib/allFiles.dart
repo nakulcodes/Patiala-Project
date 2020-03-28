@@ -8,6 +8,8 @@ export 'src/screens/guestLogin.dart';
 export 'src/screens/loader.dart';
 export 'src/screens/manager.dart';
 export 'src/screens/navBar.dart';
+
+export 'src/screens/storedata.dart';
 //Server exports
 export 'src/server/sendData.dart';
 export 'src/server/endPoint.dart';
