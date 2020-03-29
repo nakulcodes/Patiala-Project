@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter_login_signup/allFiles.dart';
 
+
+
 class LoginLoaderUser extends StatefulWidget {
   BuildContext context;
   TextEditingController _nameContro;
@@ -95,11 +97,13 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
       if (respbody["status"] == "true") {
         widget._nameContro.clear();
         widget._passContro.clear();
+        setBank(respbody["bank_id"]);
+        setMobileManager(respbody["phone"]);
 
         // print(person.namee);
 
-        // Navigator.push(widget.context,
-        //     MaterialPageRoute(builder: (context) => ChatPage()));
+        Navigator.push(widget.context,
+            MaterialPageRoute(builder: (context) => ManagerDashboard ()));
       } else if (respbody["status"] == "false") {
         // print(person.namee);
         Navigator.pop(context);

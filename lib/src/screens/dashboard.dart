@@ -238,14 +238,15 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
           SizedBox(
-            height: 30,
+            height: 20,
           ),
           Container(
-            height: MediaQuery.of(context).size.height / 8 - 30,
+            height: MediaQuery.of(context).size.height / 8 - 20,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Container(
+                  // height:60,
                   child: Column(
                     children: <Widget>[
                       Text(
@@ -345,7 +346,10 @@ class _DashboardState extends State<Dashboard> {
                             ),
                           ]),
                       Row(children: <Widget>[
-                        Text(data[index]["helmets"],style: TextStyle(fontSize: 25),),
+                        Text(
+                          data[index]["helmets"],
+                          style: TextStyle(fontSize: 25),
+                        ),
                         SizedBox(
                           width: 10,
                         ),
