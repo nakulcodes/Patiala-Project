@@ -4,7 +4,7 @@ import 'package:flutter_login_signup/allFiles.dart';
 Map<String,dynamic> _q;
 
 
-Map<String,dynamic>getBankdataa(){
+Map<String,dynamic>_getBankdataa(){
   return _q;
 
 }
