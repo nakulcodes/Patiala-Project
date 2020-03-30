@@ -274,7 +274,6 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        // key: _scaffoldKey,
         body: SingleChildScrollView(
           child: Container(
             // height: MediaQuery.of(context).size.height-100,
@@ -286,9 +285,9 @@ class _LoginPageState extends State<LoginPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      SizedBox(
-                        height: 15,
-                      ),
+                      // SizedBox(
+                      //   height: 15,
+                      // ),
                       _title(),
                       SizedBox(
                         height: 10,

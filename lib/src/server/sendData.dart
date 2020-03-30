@@ -99,6 +99,10 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
         widget._passContro.clear();
         setBank(respbody["bank_id"]);
         setMobileManager(respbody["phone"]);
+        setBankLocation(respbody["location"]);
+        setAvailHel(respbody["available_helmets"]);
+        setTotalHel(respbody["total_helmets"]);
+        setName(respbody["name"]);
 
         // print(person.namee);
 
