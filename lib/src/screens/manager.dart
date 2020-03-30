@@ -19,6 +19,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
   String availHelmets;
   bool dataRecieved = true;
   bool helEntered;
+  bool noHistory;
   String _name;
   String _managerNumber;
   String bankId;
@@ -45,7 +46,11 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
           dataRecieved = null;
         });
       } else if (data3["status"] == "false") {
-        _bankData = null;
+        setState(() {
+          // _bankData = null;
+          noHistory = true;
+          dataRecieved = null;
+        });
       }
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
@@ -66,7 +71,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
         "https://hlmt.herokuapp.com/api/transactions/approve",
         headers: headers,
         body:
-            '{"transaction_id":$transactionID,"approved":$status,"helmet_no":$helmetNumber}');
+            '{"transaction_id":$transactionID,"approved":$status,"helmet_no":$helmetNumber,"manager":$_managerNumber}');
     print(data1.body);
     String data2 = data1.body;
     var data3 = json.decode(data2);
@@ -91,7 +96,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
   void joinRoom() {
     // await socketIO.sendMessage(
     // "join", json.encode({"phone": _managerNumber}));
-    socketIO.sendMessage("join", json.encode({"phone": "8146992621"}));
+    socketIO.sendMessage("join", json.encode({"phone": _managerNumber}));
     print("Room Joined");
   }
 
@@ -100,31 +105,31 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
     // TODO: implement initState
     super.initState();
     _managerNumber = getManagerMobile();
-
     bankId = getBank();
     _name = getName();
-
     _locationName = getBankLocation();
     totalHelmets = getTotalHel();
     availHelmets = getAvailHel();
 
-    _getBankData();
     socketIO.connect();
     socketIO.init();
 
     joinRoom();
+
     print("\nRoom Joined\n");
 
     socketIO.subscribe("incoming", (incomingData) {
       String dataString = incomingData;
       var jsonDataDecoded = json.decode(dataString);
-    
+
       setState(() {
-      
+        noHistory = null;
+        dataRecieved = null;
         _bankData.add(jsonDataDecoded);
         print(_bankData);
       });
     });
+    _getBankData();
   }
 
   @override
@@ -146,7 +151,8 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                           child: Card(
                         child: Container(
                             height: 100,
-                            padding: const EdgeInsets.all(7.0),
+                            padding:
+                                const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
@@ -211,18 +217,53 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                     : _helmetReturnButton(
                                         "Helmet\nRecieved",
                                         Colors.yellow,
-                                        () {
+                                        () async {
                                           print("Helmet Recived Pressed");
-                                          socketIO.sendMessage(
-                                              "complete",
-                                              json.encode({
-                                                "body": {
-                                                  "transaction_id": int.parse(
-                                                      _bankData[index]
-                                                          ["transaction_id"]),
-                                                  "manager": "8146992621",
-                                                }
+                                          var completeData = await http.post(
+                                              completeTransacion,
+                                              headers: headers,
+                                              body: json.encode({
+                                                "transaction_id": int.parse(
+                                                    _bankData[index]
+                                                        ["transaction_id"]),
+                                                "manager": _managerNumber
                                               }));
+
+                                          var completeJson =
+                                              json.decode(completeData.body);
+                                          if (completeJson["status"] ==
+                                                  "true" &&
+                                              completeData.statusCode == 200) {
+                                            Scaffold.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content:
+                                                  Text("Transaction Completed"),
+                                            ));
+                                            setState(() {
+                                              _bankData.removeAt(index);
+                                            });
+                                          } else {
+                                            Scaffold.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text("Server Error...."),
+                                            ));
+                                          }
+                                          // socketIO.sendMessage(
+                                          //     "complete",
+                                          // json.encode({
+                                          //   "body": {
+                                          //     "transaction_id":
+                                          //         int.parse(_bankData[
+                                          //                 index][
+                                          //             "transaction_id"]),
+                                          //     "manager": "8146992621",
+                                          //   }
+                                          // }));
+                                          //     http.post(completeTransacion,
+                                          //         headers: headers,
+                                          //         body:
+                                          //             // "body":{"transaction_id":  int.parse(_bankData[index]["transaction_id"]),"manager": managerMobile});
+                                          //  );
                                         },
                                       )
                               ],
@@ -233,13 +274,32 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                     child: ColorLoader5(),
                   ),
             width: double.infinity,
-            height: MediaQuery.of(context).size.height - 124,
+            height: MediaQuery.of(context).size.height - 144,
             decoration: BoxDecoration(
                 color: Color(0xfffe9263),
                 borderRadius: BorderRadius.only(
                     topRight: Radius.circular(10),
                     topLeft: Radius.circular(10))),
-          ),
+          )
+          // : Container(
+          //     width: double.infinity,
+          //     height: MediaQuery.of(context).size.height - 144,
+          //     decoration: BoxDecoration(
+          //         color: Color(0xfffe9263),
+          //         borderRadius: BorderRadius.only(
+          //             topRight: Radius.circular(10),
+          //             topLeft: Radius.circular(10))),
+          //     child: Center(
+          //         child: Text(
+          //       "No Pending \nRequests",
+          //       style: TextStyle(
+          //         color: Colors.white,
+          //         fontSize: 30,
+          //         fontWeight: FontWeight.bold,
+          //       ),
+          //       textAlign: TextAlign.center,
+          //     )),
+          //   ),
         ],
       ),
     ));
@@ -282,10 +342,11 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
 
   Widget _top() {
     return Container(
-      padding: EdgeInsets.all(10),
-      height: 100,
+      // padding: EdgeInsets.all(1.0),
+      height: 120,
+      width: double.infinity,
       color: Colors.white,
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <
           Widget>[
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -313,8 +374,11 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
             Row(
               children: <Widget>[
                 Text(
-                  "Total \nHelmets : ",
+                  "Total Helmets : ",
                   textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  width: 5,
                 ),
                 Text(
                   "$totalHelmets",
@@ -325,17 +389,41 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
             Row(
               children: <Widget>[
                 Text(
-                  "Available \nHelmets : ",
+                  "Available Helmets : ",
                   textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  width: 5,
                 ),
                 Text(
                   "$availHelmets",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
+            ),
+            Center(
+              child: ButtonTheme(
+                child: RaisedButton(
+                  color: Color(0xfffe9263),
+                  child: Text(
+                    "Logout",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () {
+                    print("Logout Pressed");
+                    _helmetNumber.clear();
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginPage(),
+                        ),
+                        (route) => false);
+                  },
+                ),
+              ),
             )
           ],
-        )
+        ),
       ]),
     );
   }

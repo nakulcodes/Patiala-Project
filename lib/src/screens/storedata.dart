@@ -13,8 +13,8 @@ String getMobile() {
 //////Manager Data/////////////////
 
 
-String bankId;
-String managerMobile;
+String _bankId;
+String _managerMobile;
 String _location;
 String _avail;
 String _total;
@@ -49,21 +49,21 @@ String getTotalHel(){
   return _total;
 }
 void setBank(String data){
-  bankId = data;
+  _bankId = data;
 
 }
 
 String getBank(){
-  return bankId;
+  return _bankId;
 }
 
 void setMobileManager(String mob){
-  managerMobile = mob;
+  _managerMobile = mob;
 
 }
 
 String getManagerMobile(){
-  return managerMobile;
+  return _managerMobile;
 }
 
 void setBankLocation(String location){
