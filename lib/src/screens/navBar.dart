@@ -49,7 +49,7 @@ class _NavigationBarState extends State<NavigationBar> {
         items: <Widget>[
           Icon(Icons.home, size: 30),
           Icon(Icons.history, size: 30),
-          Icon(Icons.account_circle, size: 30),
+          // Icon(Icons.account_circle, size: 30),
         ],
         onTap: (index) {
           setState(() {
