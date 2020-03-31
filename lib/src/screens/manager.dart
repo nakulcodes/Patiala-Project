@@ -2,13 +2,27 @@ import 'package:flutter_login_signup/allFiles.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter_socket_io/flutter_socket_io.dart';
-import 'package:flutter_socket_io/socket_io_manager.dart';
 
 final TextEditingController _helmetNumber = TextEditingController();
 final IO.Socket socket = IO.io('https://hlmt.herokuapp.com/', <String, dynamic>{
   'transports': ['websocket'],
 });
+
+List _bankData;
+
+String totalHelmets;
+String availHelmets;
+bool dataRecieved = true;
+bool helEntered;
+bool noHistory;
+String _name;
+String _managerNumber;
+String bankId;
+String _locationName;
+int check;
+int _selectedRadio = 0;
+
+var refreshKey = GlobalKey<RefreshIndicatorState>();
 
 class ManagerDashboard extends StatefulWidget {
   @override
@@ -16,42 +30,32 @@ class ManagerDashboard extends StatefulWidget {
 }
 
 class _ManagerDashboardState extends State<ManagerDashboard> {
-  List _bankData;
-  // SocketIO socketIO;
-  String totalHelmets;
-  String availHelmets;
-  bool dataRecieved = true;
-  bool helEntered;
-  bool noHistory;
-  String _name;
-  String _managerNumber;
-  String bankId;
-  String _locationName;
-  SocketIO socketIO = SocketIOManager().createSocketIO(
-    'https://hlmt.herokuapp.com',
-    '/',
-  );
-  var refreshKey = GlobalKey<RefreshIndicatorState>();
-
   void _getBankData() async {
     var data1 = await http.post(
         "https://hlmt.herokuapp.com/api/managers/history",
         headers: headers,
         body: '{"bank_id":"$bankId"}');
-    print(data1.body);
+    // print(data1.body);
     String data2 = data1.body;
     var data3 = json.decode(data2);
-    print(data3["transactions"]);
+    // print(data3["transactions"]);
     if (data1.statusCode == 200) {
       if (data3["status"] == "true") {
         // joinRoom();
         _bankData = data3["transactions"];
-        print(_bankData.length);
-        setState(() {
-          noHistory = false;
-        });
+        // print(_bankData.length);
+        if (mounted)
+          setState(() {
+            // noHistory = false;
+            check = 1;
+          });
       } else if (data3["status"] == "false") {
         // joinRoom();
+        // noHistory = null;
+        if (mounted)
+          setState(() {
+            check = 0;
+          });
       }
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
@@ -64,33 +68,49 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       int index, int status, String helmetNumber, BuildContext _context) async {
     _helmetNumber.clear();
     var transactionID = _bankData[index]["transaction_id"];
-    print(index);
-    print(status);
-    print(helmetNumber);
-    print(transactionID);
+    // print(index);
+    // print(status);
+    // print(helmetNumber);
+    // print(transactionID);
     var data1 = await http.post(
         "https://hlmt.herokuapp.com/api/transactions/approve",
         headers: headers,
         body:
             '{"transaction_id":$transactionID,"approved":$status,"helmet_no":$helmetNumber,"manager":$_managerNumber}');
-    print(data1.body);
+    // print(data1.body);
     String data2 = data1.body;
     var data3 = json.decode(data2);
-
+    print(_bankData.length);
     if (data1.statusCode == 200) {
       if (data3["status"] == "true") {
-        setState(() {
-          _bankData.removeAt(index);
-        });
+        if (status == 1) {
+          int _no = int.parse(availHelmets);
+          setAvailHel((_no - 1).toString());
+          availHelmets = getAvailHel();
+        }
+        if (mounted)
+          setState(() {
+            _bankData.removeAt(index);
+            if (status == 1) {
+              availHelmets = getAvailHel();
+            }
+            if (_bankData.length == 0) {
+              check = 0;
+            }
+          });
       } else if (data3["status"] == "false") {
         if (data3["desc"] == "helmet") {
           Scaffold.of(_context).showSnackBar(SnackBar(
             content: Text("Wrong Helmet Number"),
           ));
         } else {
-          setState(() {
-            _bankData.removeAt(index);
-          });
+          if (mounted)
+            setState(() {
+              _bankData.removeAt(index);
+              if (_bankData == null) {
+                noHistory = null;
+              }
+            });
 
           Scaffold.of(_context).showSnackBar(SnackBar(
             content: Text("Time Exceeded"),
@@ -104,23 +124,54 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
     }
   }
 
-  Future join() async {
-    print("Coming..");
+  // List check;
+
+  void join() {
+    // print("Coming..");
     socket.emit('join', {"phone": _managerNumber});
 
     socket.on("incoming", (data) {
-      Map<String, dynamic> t = {"transactions": data};
+      // Map<String, dynamic> t = {"transactions": data};
+      print(data);
 
-      if (noHistory != null) {
-        setState(() {
-          _bankData.add(t["transactions"]);
-        });
-      } else if (noHistory == null) {
-        setState(() {
-          _bankData = [t["transactions"]];
-          noHistory = false;
-        });
+      // print(t);
+      // print(t);
+      //   check = [data];
+      if (check == 0) {
+        _bankData = [data];
+        if (mounted) {
+          setState(() {
+            check = 1;
+            // noHistory = true;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _bankData.add(data);
+          });
+        }
       }
+      //  print(check);
+      //   print(check.length);
+
+      // _bankData.add(data);
+
+      // print(_bankData);
+      // print(_bankData.length);
+// setState(() {
+//       if (noHistory != null) {
+//         setState(() {
+//           _bankData.add(t["transactions"]);
+//         });
+//       }
+//       // else if (noHistory == null) {
+//       //   print("Coming Here");
+
+//       //     _bankData = [t];
+//       //     noHistory = false;
+//       //   }
+//       });
       // print(_bankData);
     });
   }
@@ -129,7 +180,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
     // refreshKey.currentState?.show(atTop: false);
     await Future.delayed(Duration(seconds: 2));
 
-    print("REFRESHING");
+    // print("REFRESHING");
     _getBankData();
   }
 
@@ -146,10 +197,10 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
     availHelmets = getAvailHel();
 
     socket.connect();
-    print("\n");
+    // print("\n");
     socket.on("check", (data) {
-      print("Inside Socket Check");
-      print(data);
+      // print("Inside Socket Check");
+      // print(data);
       while (data != true) {
         socket.connect();
       }
@@ -157,6 +208,11 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
     join();
 
     _getBankData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -170,32 +226,35 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
         child: Column(
           children: <Widget>[
             _top(),
-            noHistory == null
-                ? Container(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height - 144,
-                    decoration: BoxDecoration(
-                        color: Color(0xfffe9263),
-                        borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(10),
-                            topLeft: Radius.circular(10))),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text(
-                            "No Pending \nRequests",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
+            check == 0
+                ? Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      // height: MediaQuery.of(context).size.height - 144,
+                      decoration: BoxDecoration(
+                          color: Color(0xfffe9263),
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              topLeft: Radius.circular(10))),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Text(
+                              "No Pending \nRequests",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   )
+                // )
                 : Expanded(
                     child: Container(
                       padding: EdgeInsets.only(top: 10),
@@ -218,6 +277,8 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                           Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceEvenly,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 CircleAvatar(
                                                   radius: 30,
@@ -237,13 +298,13 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                         _bankData[index]
                                                             ["user"],
                                                         style: TextStyle(
-                                                            fontSize: 15,
+                                                            fontSize: 13,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold)),
                                               ]),
                                           SizedBox(
-                                            width: 4,
+                                            width: 7,
                                           ),
                                           Column(
                                             mainAxisAlignment:
@@ -290,61 +351,125 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                 }, Colors.red),
                                               ],
                                             )
-                                          : _helmetReturnButton(
-                                              "Helmet\nRecieved",
-                                              Colors.yellow,
-                                              () async {
-                                                print("Helmet Recived Pressed");
-                                                var completeData = await http
-                                                    .post(completeTransacion,
-                                                        headers: headers,
-                                                        body: json.encode({
-                                                          "transaction_id": int
-                                                              .parse(_bankData[
-                                                                      index][
-                                                                  "transaction_id"]),
-                                                          "manager":
-                                                              _managerNumber
-                                                        }));
+                                          : Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                _helmetReturnButton(
+                                                  "Helmet\nRecieved",
+                                                  Colors.yellow,
+                                                  () async {
+                                                    print(
+                                                        "Helmet Recived Pressed");
+                                                    var completeData =
+                                                        await http.post(
+                                                            completeTransacion,
+                                                            headers: headers,
+                                                            body: json.encode({
+                                                              "transaction_id":
+                                                                  int.parse(_bankData[
+                                                                          index]
+                                                                      [
+                                                                      "transaction_id"]),
+                                                              "manager":
+                                                                  _managerNumber,
+                                                              "foundfaulty":
+                                                                  _selectedRadio
+                                                            }));
 
-                                                var completeJson = json
-                                                    .decode(completeData.body);
-                                                if (completeJson["status"] ==
-                                                        "true" &&
-                                                    completeData.statusCode ==
-                                                        200) {
-                                                  Scaffold.of(context)
-                                                      .showSnackBar(SnackBar(
-                                                    content: Text(
-                                                        "Transaction Completed"),
-                                                  ));
-                                                  setState(() {
-                                                    _bankData.removeAt(index);
-                                                  });
-                                                } else {
-                                                  Scaffold.of(context)
-                                                      .showSnackBar(SnackBar(
-                                                    content: Text(
-                                                        "Server Error...."),
-                                                  ));
-                                                }
-                                                // socketIO.sendMessage(
-                                                //     "complete",
-                                                // json.encode({
-                                                //   "body": {
-                                                //     "transaction_id":
-                                                //         int.parse(_bankData[
-                                                //                 index][
-                                                //             "transaction_id"]),
-                                                //     "manager": "8146992621",
-                                                //   }
-                                                // }));
-                                                //     http.post(completeTransacion,
-                                                //         headers: headers,
-                                                //         body:
-                                                //             // "body":{"transaction_id":  int.parse(_bankData[index]["transaction_id"]),"manager": managerMobile});
-                                                //  );
-                                              },
+                                                    var completeJson =
+                                                        json.decode(
+                                                            completeData.body);
+                                                    if (completeJson[
+                                                                "status"] ==
+                                                            "true" &&
+                                                        completeData
+                                                                .statusCode ==
+                                                            200) {
+                                                      Scaffold.of(context)
+                                                          .showSnackBar(
+                                                              SnackBar(
+                                                        content: Text(
+                                                            "Transaction Completed"),
+                                                      ));
+                                                      int _no = int.parse(
+                                                          availHelmets);
+                                                      setAvailHel(
+                                                          (_no + 1).toString());
+                                                      setState(() {
+                                                        availHelmets =
+                                                            getAvailHel();
+                                                        if (_bankData.length ==
+                                                            1) {
+                                                          check = 0;
+                                                        }
+                                                        _bankData
+                                                            .removeAt(index);
+                                                      });
+                                                    } else {
+                                                      Scaffold.of(context)
+                                                          .showSnackBar(
+                                                              SnackBar(
+                                                        content: Text(
+                                                            "Server Error...."),
+                                                      ));
+                                                    }
+                                                    // socketIO.sendMessage(
+                                                    //     "complete",
+                                                    // json.encode({
+                                                    //   "body": {
+                                                    //     "transaction_id":
+                                                    //         int.parse(_bankData[
+                                                    //                 index][
+                                                    //             "transaction_id"]),
+                                                    //     "manager": "8146992621",
+                                                    //   }
+                                                    // }));
+                                                    //     http.post(completeTransacion,
+                                                    //         headers: headers,
+                                                    //         body:
+                                                    //             // "body":{"transaction_id":  int.parse(_bankData[index]["transaction_id"]),"manager": managerMobile});
+                                                    //  );
+                                                  },
+                                                ),
+                                                Container(
+                                                    height: 17,
+                                                    child:
+                                                        Row(children: <Widget>[
+                                                      Radio(
+                                                        value: 0,
+                                                        groupValue:
+                                                            _selectedRadio,
+                                                        onChanged: (val) {
+                                                          print(val);
+                                                          setSelectedRadio(val);
+                                                        },
+                                                      ),
+                                                      Text("Okay")
+                                                    ])),
+                                                Container(
+                                                    height: 17,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: <Widget>[
+                                                        Radio(
+                                                          value: 1,
+                                                          groupValue:
+                                                              _selectedRadio,
+                                                          onChanged: (val) {
+                                                            print(val);
+                                                            setSelectedRadio(
+                                                                val);
+                                                          },
+                                                        ),
+                                                        Text("Damaged"),
+                                                      ],
+                                                    )),
+                                              ],
                                             )
                                     ],
                                   )),
@@ -360,6 +485,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                               topLeft: Radius.circular(10))),
                     ),
                   ),
+
             // )
             // : Container(
             //     width: double.infinity,
@@ -405,8 +531,8 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
 
   Widget _helmetReturnButton(String title, Color col, Function onPressed) {
     return Container(
-      width: 100,
-      height: 50,
+      width: 120,
+      height: 40,
       decoration: BoxDecoration(
           color: col, borderRadius: BorderRadius.all(Radius.circular(5))),
       child: InkWell(
@@ -431,16 +557,31 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
           Widget>[
         Container(
           width: MediaQuery.of(context).size.width / 2,
-          padding: EdgeInsets.fromLTRB(5, 10, 0, 25),
+          padding: EdgeInsets.fromLTRB(5, 10, 0, 20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                _name.length < 9
-                    ? "Hi! " + _name
-                    : "Hi! " + _name.substring(0, 9),
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+              Container(
+                width: MediaQuery.of(context).size.width / 2,
+                // height: MediaQuery.of(context).size.height / 10 * 2,
+                child: _name.length < 6
+                    ? Text(
+                        "Hi! " + _name,
+                        style: TextStyle(
+                            fontSize: 40, fontWeight: FontWeight.bold),
+                      )
+                    : _name.length <= 10
+                        ? Text(
+                            "Hi! " + _name,
+                            style: TextStyle(
+                                fontSize: 35, fontWeight: FontWeight.bold),
+                          )
+                        : Text(
+                            "Hi! " + _name.substring(0, 10) + "..",
+                            style: TextStyle(
+                                fontSize: 35, fontWeight: FontWeight.bold),
+                          ),
               ),
               Row(
                 children: <Widget>[
@@ -510,15 +651,33 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                         ),
                         onPressed: () {
                           print("Logout Pressed");
-                          _locationName.length;
+                          // _locationName.length;
                           _helmetNumber.clear();
                           // socketIO.unSubscribesAll();
                           // socketIO.disconnect();
-                          socket.disconnect();
+                          // socket.disconnect();
+                          // socket.close();
+                          check = 0;
+                          //                     Navigator.pushAndRemoveUntil(
+                          // context,
+                          // PageRouteBuilder(pageBuilder: (BuildContext context, Animation animation,
+                          //     Animation secondaryAnimation) {
+                          //   return LoginPage();
+                          // }, transitionsBuilder: (BuildContext context, Animation<double> animation,
+                          //     Animation<double> secondaryAnimation, Widget child) {
+                          //   return new SlideTransition(
+                          //     position: new Tween<Offset>(
+                          //       begin: const Offset(1.0, 0.0),
+                          //       end: Offset.zero,
+                          //     ).animate(animation),
+                          //     child: child,
+                          //   );
+                          // }),
+                          // (Route route) => false);
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LoginPage(),
+                                builder: (BuildContext context) => LoginPage(),
                               ),
                               (route) => false);
                         },
@@ -573,5 +732,11 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
             ],
           );
         });
+  }
+
+  void setSelectedRadio(int val) {
+    setState(() {
+      _selectedRadio = val;
+    });
   }
 }
