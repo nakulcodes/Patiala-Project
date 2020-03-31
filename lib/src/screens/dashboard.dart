@@ -24,6 +24,7 @@ class _DashboardState extends State<Dashboard> {
   String totalUser;
   String check;
   String number;
+  String user;
   bool bar;
   bool check1 = false;
   int r = 0;
@@ -33,7 +34,7 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     bar = isBar();
     super.initState();
-    // this.loginCheck();
+    user = getTitle();
 
     print("$q this is q..........");
     print("Cominggggggggggggggggggggggggggggggggggggggggggggg");
@@ -155,7 +156,7 @@ class _DashboardState extends State<Dashboard> {
   void bookHelmetData(String data, BuildContext context) async {
     print("$data is inside book helmet");
     print("$number");
-    var _body1 = '{"bank":"$data","type":"reg_user","phone":"$number"}';
+    var _body1 = '{"bank":"$data","type":"$title","phone":"$number"}';
     var _helResp = await http.post(bookHelmet, headers: headers, body: _body1);
     print(_helResp);
     String _helRepStr = _helResp.body;
@@ -189,9 +190,9 @@ class _DashboardState extends State<Dashboard> {
                     child: Column(
                       children: <Widget>[
                         _topHome(),
-                        SizedBox(
-                          width: 12,
-                        ),
+                        // SizedBox(
+                        //   width: 15,
+                        // ),
                         _listBuild(),
                         _avail(context),
                       ],
@@ -297,10 +298,11 @@ class _DashboardState extends State<Dashboard> {
 
   Widget _listBuild() {
     return Container(
+      margin: title == "guest"?EdgeInsets.only(top:13):EdgeInsets.only(top:5),
       decoration: BoxDecoration(
         color: Color(0xfffe9263),
       ),
-      height: MediaQuery.of(context).size.height / 1.9,
+      height: title == "guest"?MediaQuery.of(context).size.height / 1.7:MediaQuery.of(context).size.height / 2.0,
       child: ListView.builder(
           itemCount: data == null ? 0 : data.length,
           padding: EdgeInsets.all(5),

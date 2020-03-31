@@ -1,11 +1,14 @@
 import 'package:flutter_login_signup/allFiles.dart';
-
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_socket_io/flutter_socket_io.dart';
 import 'package:flutter_socket_io/socket_io_manager.dart';
 
 final TextEditingController _helmetNumber = TextEditingController();
+final IO.Socket socket = IO.io('https://hlmt.herokuapp.com/', <String, dynamic>{
+  'transports': ['websocket'],
+});
 
 class ManagerDashboard extends StatefulWidget {
   @override
@@ -31,7 +34,6 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
   var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   void _getBankData() async {
-    joinRoom();
     var data1 = await http.post(
         "https://hlmt.herokuapp.com/api/managers/history",
         headers: headers,
@@ -42,15 +44,14 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
     print(data3["transactions"]);
     if (data1.statusCode == 200) {
       if (data3["status"] == "true") {
-        joinRoom();
+        // joinRoom();
         _bankData = data3["transactions"];
         print(_bankData.length);
         setState(() {
           noHistory = false;
         });
       } else if (data3["status"] == "false") {
-        joinRoom();
-        
+        // joinRoom();
       }
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
@@ -82,15 +83,18 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
           _bankData.removeAt(index);
         });
       } else if (data3["status"] == "false") {
-        if(index == 1){
-        Scaffold.of(_context).showSnackBar(SnackBar(
-          content: Text("Wrong Helmet Number"),
-        ));
-        }
-        else if(index ==0){
-           Scaffold.of(_context).showSnackBar(SnackBar(
-          content: Text("Time Exceeded"),
-        ));
+        if (data3["desc"] == "helmet") {
+          Scaffold.of(_context).showSnackBar(SnackBar(
+            content: Text("Wrong Helmet Number"),
+          ));
+        } else {
+          setState(() {
+            _bankData.removeAt(index);
+          });
+
+          Scaffold.of(_context).showSnackBar(SnackBar(
+            content: Text("Time Exceeded"),
+          ));
         }
       }
     } else {
@@ -100,10 +104,25 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
     }
   }
 
-  void joinRoom() {
-    print(_managerNumber);
-    socketIO.sendMessage("join", json.encode({"phone": _managerNumber}));
-    print("\nRoom Joined\n");
+  Future join() async {
+    print("Coming..");
+    socket.emit('join', {"phone": _managerNumber});
+
+    socket.on("incoming", (data) {
+      Map<String, dynamic> t = {"transactions": data};
+
+      if (noHistory != null) {
+        setState(() {
+          _bankData.add(t["transactions"]);
+        });
+      } else if (noHistory == null) {
+        setState(() {
+          _bankData = [t["transactions"]];
+          noHistory = false;
+        });
+      }
+      // print(_bankData);
+    });
   }
 
   Future<Null> refreshList() async {
@@ -118,7 +137,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    joinRoom();
+
     _managerNumber = getManagerMobile();
     bankId = getBank();
     _name = getName();
@@ -126,45 +145,22 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
     totalHelmets = getTotalHel();
     availHelmets = getAvailHel();
 
-    socketIO.connect();
-    socketIO.init();
-
-    joinRoom();
-
-    print("\nRoom Joined\n");
-
-    socketIO.subscribe("incoming", (incomingData) {
-      String dataString = incomingData;
-      var jsonDataDecoded = json.decode(dataString);
-      print(jsonDataDecoded);
-
-      if (noHistory != null) {
-        setState(() {
-          _bankData.add(jsonDataDecoded);
-        });
-      } else if (noHistory == null) {
-        Map<String, dynamic> t = {
-          "transactions": [jsonDataDecoded]
-        };
-        print(t);
-        print("\n");
-
-        print(json.encode(t));
-
-        setState(() {
-          _bankData = t["transactions"];
-          noHistory = false;
-        });
+    socket.connect();
+    print("\n");
+    socket.on("check", (data) {
+      print("Inside Socket Check");
+      print(data);
+      while (data != true) {
+        socket.connect();
       }
-      print(_bankData);
     });
+    join();
 
     _getBankData();
   }
 
   @override
   Widget build(BuildContext context) {
-    joinRoom();
     return SafeArea(
         child: Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -173,7 +169,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
         key: refreshKey,
         child: Column(
           children: <Widget>[
-           _top(),
+            _top(),
             noHistory == null
                 ? Container(
                     width: double.infinity,
@@ -201,8 +197,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                     ),
                   )
                 : Expanded(
-                  
-                                  child: Container(
+                    child: Container(
                       padding: EdgeInsets.only(top: 10),
                       child: ListView.builder(
                           // itemCount: 15,
@@ -227,11 +222,25 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                 CircleAvatar(
                                                   radius: 30,
                                                 ),
-                                                Text(_bankData[index]["user"],
-                                                    style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold)),
+                                                _bankData[index]["user"]
+                                                            .length <
+                                                        8
+                                                    ? Text(
+                                                        _bankData[index]
+                                                            ["user"],
+                                                        style: TextStyle(
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold))
+                                                    : Text(
+                                                        _bankData[index]
+                                                            ["user"],
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
                                               ]),
                                           SizedBox(
                                             width: 4,
@@ -264,7 +273,8 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                       _bankData[index]["issue_datetime"] == null
                                           ? Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: <Widget>[
                                                 _button("Accept", () {
                                                   print("Accept Pressed");
@@ -275,8 +285,8 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                 }, Colors.green[600]),
                                                 _button("Decline", () {
                                                   print("Decline Pressed");
-                                                  _sendBookingData(
-                                                      index, 0, "null", context);
+                                                  _sendBookingData(index, 0,
+                                                      "null", context);
                                                 }, Colors.red),
                                               ],
                                             )
@@ -289,8 +299,8 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                     .post(completeTransacion,
                                                         headers: headers,
                                                         body: json.encode({
-                                                          "transaction_id":
-                                                              int.parse(_bankData[
+                                                          "transaction_id": int
+                                                              .parse(_bankData[
                                                                       index][
                                                                   "transaction_id"]),
                                                           "manager":
@@ -314,8 +324,8 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                 } else {
                                                   Scaffold.of(context)
                                                       .showSnackBar(SnackBar(
-                                                    content:
-                                                        Text("Server Error...."),
+                                                    content: Text(
+                                                        "Server Error...."),
                                                   ));
                                                 }
                                                 // socketIO.sendMessage(
@@ -349,7 +359,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                               topRight: Radius.circular(10),
                               topLeft: Radius.circular(10))),
                     ),
-                ),
+                  ),
             // )
             // : Container(
             //     width: double.infinity,
@@ -421,13 +431,16 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
           Widget>[
         Container(
           width: MediaQuery.of(context).size.width / 2,
+          padding: EdgeInsets.fromLTRB(5, 10, 0, 25),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-            Text(
-                  _name.length<9?"Hi! "+ _name:"Hi! " + _name.substring(0,9),
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              Text(
+                _name.length < 9
+                    ? "Hi! " + _name
+                    : "Hi! " + _name.substring(0, 9),
+                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
               ),
               Row(
                 children: <Widget>[
@@ -492,14 +505,16 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                         color: Color(0xfffe9263),
                         child: Text(
                           "Logout",
-                          style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                         onPressed: () {
                           print("Logout Pressed");
                           _locationName.length;
                           _helmetNumber.clear();
-                          socketIO.unSubscribesAll();
-                          socketIO.disconnect();
+                          // socketIO.unSubscribesAll();
+                          // socketIO.disconnect();
+                          socket.disconnect();
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
@@ -524,7 +539,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       children: <Widget>[
         Text(text),
         Container(
-          width:70,
+          width: 70,
           child: Text(
             data,
             style: TextStyle(fontWeight: FontWeight.bold),

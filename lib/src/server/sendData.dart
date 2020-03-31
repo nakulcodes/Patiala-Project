@@ -31,9 +31,10 @@ class _LoginLoaderUserState extends State<LoginLoaderUser> {
 
     print(respbody["status"]);
     setUser(respbody, true);
-
+setTitle("reg_user");
     if (response.statusCode == 200) {
       if (respbody["status"] == "true") {
+
         widget._nameContro.clear();
         widget._passContro.clear();
 
@@ -232,22 +233,24 @@ void sendGuestData(
       await http.post(guestLogin, headers: headers, body: dataGuest);
   String respGuest = responseGuest.body;
 
-  var respbodyGuest = json.decode(respGuest);
+  var _respbodyGuest = json.decode(respGuest);
 
-  setUser(respbodyGuest, false);
+  setUser(_respbodyGuest, false);
+   setTitle("guest");
+
 
   if (responseGuest.statusCode == 200) {
     _guestNameData.clear();
     _guestEmailData.clear();
     _guestPhoneData.clear();
-    print(respbodyGuest);
+    // print(respbodyGuest);
 
-    if (respbodyGuest["status"] == "true") {
+    if (_respbodyGuest["status"] == "true") {
       print("GUesst Dataa");
       Navigator.push(
           guestContext, MaterialPageRoute(builder: (context) => Dashboard()));
     }
-    if (respbodyGuest["status"] == "false") {
+    if (_respbodyGuest["status"] == "false") {
       print("Error");
       Scaffold.of(guestContext).showSnackBar(snackBarErrorGuest);
       // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
