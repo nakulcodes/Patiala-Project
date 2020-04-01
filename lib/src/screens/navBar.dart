@@ -47,7 +47,7 @@ class _NavigationBarState extends State<NavigationBar> {
         height: 50,
         key: _bottomNavigationKey,
         items: <Widget>[
-          Icon(Icons.home, size: 30),
+          Icon(Icons.home, size: 30,),
           Icon(Icons.history, size: 30),
           // Icon(Icons.account_circle, size: 30),
         ],

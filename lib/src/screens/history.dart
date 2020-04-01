@@ -14,7 +14,7 @@ class _HistoryState extends State<History> {
   // List noData = [
   //   {"data": "No History"}
   // ];
-  @override
+ 
   void getHistory() async {
     var data = await http.post(userHistory,
         headers: headers, body: '{"phone": "$_mobile"}');
@@ -26,11 +26,13 @@ class _HistoryState extends State<History> {
       if (body1["status"] == "true") {
         print(body1);
         _toShow = body1["transactions"];
+        if(mounted)
         setState(() {
           _check = true;
           _toShow = body1["transactions"];
         });
       } else {
+        if(mounted)
         setState(() {
           print(body1);
           // _toShow = noData;

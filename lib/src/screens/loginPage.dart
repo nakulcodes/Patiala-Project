@@ -280,24 +280,20 @@ class _LoginPageState extends State<LoginPage> {
             child: Stack(
               children: <Widget>[
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      // SizedBox(
-                      //   height: 15,
-                      // ),
                       _title(),
-                      SizedBox(
-                        height: 10,
-                      ),
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
                       _emailPasswordWidget(),
                       // SizedBox(
                       //   height: 5,
                       // ),
-                      Container(
-                          child: Row(
+                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Container(
@@ -331,10 +327,8 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ],
-                      )),
-                      // SizedBox(
-                      //   height: 5,
-                      // ),
+                      ),
+                   
                       _submitButton(),
                       Container(
                         padding: EdgeInsets.symmetric(vertical: 5.0),
@@ -348,10 +342,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       _divider(),
                       _guestSignUp(),
-                      // Expanded(
-                      //   flex: 1,
-                      //   child: SizedBox(),
-                      // ),
+                    
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: _createAccountLabel(),

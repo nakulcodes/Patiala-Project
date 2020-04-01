@@ -217,299 +217,308 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-      resizeToAvoidBottomPadding: false,
-      body: RefreshIndicator(
-        onRefresh: refreshList,
-        key: refreshKey,
-        child: Column(
-          children: <Widget>[
-            _top(),
-            check == 0
-                ? Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      // height: MediaQuery.of(context).size.height - 144,
-                      decoration: BoxDecoration(
-                          color: Color(0xfffe9263),
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10),
-                              topLeft: Radius.circular(10))),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            Text(
-                              "No Pending \nRequests",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: SafeArea(
+          child: Scaffold(
+        resizeToAvoidBottomPadding: false,
+        body: RefreshIndicator(
+          onRefresh: refreshList,
+          key: refreshKey,
+          child: Column(
+            children: <Widget>[
+              _top(),
+              check == 0
+                  ? Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        // height: MediaQuery.of(context).size.height - 144,
+                        decoration: BoxDecoration(
+                            color: Color(0xfffe9263),
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                topLeft: Radius.circular(10))),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              Text(
+                                "No Pending \nRequests",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                // )
-                : Expanded(
-                    child: Container(
-                      padding: EdgeInsets.only(top: 10),
-                      child: ListView.builder(
-                          // itemCount: 15,
-                          itemCount: _bankData == null ? 0 : _bankData.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return SingleChildScrollView(
-                                child: Card(
-                              child: Container(
-                                  height: 100,
-                                  padding: const EdgeInsets.fromLTRB(
-                                      5.0, 5.0, 5.0, 5.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Row(
-                                        children: <Widget>[
-                                          Column(
+                    )
+                  // )
+                  : Expanded(
+                      child: Container(
+                        padding: EdgeInsets.only(top: 10),
+                        child: ListView.builder(
+                            // itemCount: 15,
+                            itemCount: _bankData == null ? 0 : _bankData.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return SingleChildScrollView(
+                                  child: Card(
+                                child: Container(
+                                    height: 100,
+                                    padding: const EdgeInsets.fromLTRB(
+                                        5.0, 5.0, 5.0, 5.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Row(
+                                          children: <Widget>[
+                                            Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  CircleAvatar(
+                                                    radius: 30,
+                                                  ),
+                                                  _bankData[index]["user"]
+                                                              .length <
+                                                          8
+                                                      ? Text(
+                                                          _bankData[index]
+                                                              ["user"],
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold))
+                                                      : Text(
+                                                          _bankData[index]
+                                                              ["user"],
+                                                          style: TextStyle(
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                ]),
+                                            SizedBox(
+                                              width: 7,
+                                            ),
+                                            Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceEvenly,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
-                                                CircleAvatar(
-                                                  radius: 30,
-                                                ),
-                                                _bankData[index]["user"]
-                                                            .length <
-                                                        8
-                                                    ? Text(
+                                                _rowText(
+                                                    "Transaction Id : ",
+                                                    _bankData[index]
+                                                        ["transaction_id"]),
+                                                _bankData[index][
+                                                            "issue_datetime"] ==
+                                                        null
+                                                    ? _rowText(
+                                                        "Request Time : ",
                                                         _bankData[index]
-                                                            ["user"],
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold))
-                                                    : Text(
+                                                            ["query_datetime"])
+                                                    : _rowText(
+                                                        "Time Picked : ",
                                                         _bankData[index]
-                                                            ["user"],
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
-                                              ]),
-                                          SizedBox(
-                                            width: 7,
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              _rowText(
-                                                  "Transaction Id : ",
-                                                  _bankData[index]
-                                                      ["transaction_id"]),
-                                              _bankData[index]
-                                                          ["issue_datetime"] ==
-                                                      null
-                                                  ? _rowText(
-                                                      "Request Time : ",
-                                                      _bankData[index]
-                                                          ["query_datetime"])
-                                                  : _rowText(
-                                                      "Time Picked : ",
-                                                      _bankData[index]
-                                                          ["issue_datetime"]),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      _bankData[index]["issue_datetime"] == null
-                                          ? Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                _button("Accept", () {
-                                                  print("Accept Pressed");
-                                                  _dialog(context, index);
-                                                  // setState(() {
-                                                  //   helmetPicked = true;
-                                                  // });
-                                                }, Colors.green[600]),
-                                                _button("Decline", () {
-                                                  print("Decline Pressed");
-                                                  _sendBookingData(index, 0,
-                                                      "null", context);
-                                                }, Colors.red),
+                                                            ["issue_datetime"]),
                                               ],
-                                            )
-                                          : Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                _helmetReturnButton(
-                                                  "Helmet\nRecieved",
-                                                  Colors.yellow,
-                                                  () async {
-                                                    print(
-                                                        "Helmet Recived Pressed");
-                                                    var completeData =
-                                                        await http.post(
-                                                            completeTransacion,
-                                                            headers: headers,
-                                                            body: json.encode({
-                                                              "transaction_id":
-                                                                  int.parse(_bankData[
-                                                                          index]
-                                                                      [
-                                                                      "transaction_id"]),
-                                                              "manager":
-                                                                  _managerNumber,
-                                                              "foundfaulty":
-                                                                  _selectedRadio
-                                                            }));
+                                            ),
+                                          ],
+                                        ),
+                                        _bankData[index]["issue_datetime"] ==
+                                                null
+                                            ? Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  _button("Accept", () {
+                                                    print("Accept Pressed");
+                                                    _dialog(context, index);
+                                                    // setState(() {
+                                                    //   helmetPicked = true;
+                                                    // });
+                                                  }, Colors.green[600]),
+                                                  _button("Decline", () {
+                                                    print("Decline Pressed");
+                                                    _sendBookingData(index, 0,
+                                                        "null", context);
+                                                  }, Colors.red),
+                                                ],
+                                              )
+                                            : Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  _helmetReturnButton(
+                                                    "Helmet\nRecieved",
+                                                    Colors.yellow,
+                                                    () async {
+                                                      print(
+                                                          "Helmet Recived Pressed");
+                                                      var completeData =
+                                                          await http.post(
+                                                              completeTransacion,
+                                                              headers: headers,
+                                                              body:
+                                                                  json.encode({
+                                                                "transaction_id":
+                                                                    int.parse(_bankData[
+                                                                            index]
+                                                                        [
+                                                                        "transaction_id"]),
+                                                                "manager":
+                                                                    _managerNumber,
+                                                                "foundfaulty":
+                                                                    _selectedRadio
+                                                              }));
 
-                                                    var completeJson =
-                                                        json.decode(
-                                                            completeData.body);
-                                                    if (completeJson[
-                                                                "status"] ==
-                                                            "true" &&
-                                                        completeData
-                                                                .statusCode ==
-                                                            200) {
-                                                      Scaffold.of(context)
-                                                          .showSnackBar(
-                                                              SnackBar(
-                                                        content: Text(
-                                                            "Transaction Completed"),
-                                                      ));
-                                                      int _no = int.parse(
-                                                          availHelmets);
-                                                      setAvailHel(
-                                                          (_no + 1).toString());
-                                                      setState(() {
-                                                        availHelmets =
-                                                            getAvailHel();
-                                                        if (_bankData.length ==
-                                                            1) {
-                                                          check = 0;
-                                                        }
-                                                        _bankData
-                                                            .removeAt(index);
-                                                      });
-                                                    } else {
-                                                      Scaffold.of(context)
-                                                          .showSnackBar(
-                                                              SnackBar(
-                                                        content: Text(
-                                                            "Server Error...."),
-                                                      ));
-                                                    }
-                                                    // socketIO.sendMessage(
-                                                    //     "complete",
-                                                    // json.encode({
-                                                    //   "body": {
-                                                    //     "transaction_id":
-                                                    //         int.parse(_bankData[
-                                                    //                 index][
-                                                    //             "transaction_id"]),
-                                                    //     "manager": "8146992621",
-                                                    //   }
-                                                    // }));
-                                                    //     http.post(completeTransacion,
-                                                    //         headers: headers,
-                                                    //         body:
-                                                    //             // "body":{"transaction_id":  int.parse(_bankData[index]["transaction_id"]),"manager": managerMobile});
-                                                    //  );
-                                                  },
-                                                ),
-                                                Container(
-                                                    height: 17,
-                                                    child:
-                                                        Row(children: <Widget>[
-                                                      Radio(
-                                                        value: 0,
-                                                        groupValue:
-                                                            _selectedRadio,
-                                                        onChanged: (val) {
-                                                          print(val);
-                                                          setSelectedRadio(val);
-                                                        },
-                                                      ),
-                                                      Text("Okay")
-                                                    ])),
-                                                Container(
-                                                    height: 17,
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceAround,
-                                                      children: <Widget>[
-                                                        Radio(
-                                                          value: 1,
-                                                          groupValue:
-                                                              _selectedRadio,
-                                                          onChanged: (val) {
-                                                            print(val);
-                                                            setSelectedRadio(
-                                                                val);
-                                                          },
-                                                        ),
-                                                        Text("Damaged"),
-                                                      ],
-                                                    )),
-                                              ],
-                                            )
-                                    ],
-                                  )),
-                            ));
-                          }),
-                      width: double.infinity,
-                      // height: MediaQuery.of(context).size.height - 144,
-                      // height: MediaQuery.of(context).size.height / 10 * 8 -18,
-                      decoration: BoxDecoration(
-                          color: Color(0xfffe9263),
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10),
-                              topLeft: Radius.circular(10))),
+                                                      var completeJson = json
+                                                          .decode(completeData
+                                                              .body);
+                                                      if (completeJson[
+                                                                  "status"] ==
+                                                              "true" &&
+                                                          completeData
+                                                                  .statusCode ==
+                                                              200) {
+                                                        Scaffold.of(context)
+                                                            .showSnackBar(
+                                                                SnackBar(
+                                                          content: Text(
+                                                              "Transaction Completed"),
+                                                        ));
+                                                        int _no = int.parse(
+                                                            availHelmets);
+                                                        setAvailHel((_no + 1)
+                                                            .toString());
+                                                        setState(() {
+                                                          availHelmets =
+                                                              getAvailHel();
+                                                          if (_bankData
+                                                                  .length ==
+                                                              1) {
+                                                            check = 0;
+                                                          }
+                                                          _bankData
+                                                              .removeAt(index);
+                                                        });
+                                                      } else {
+                                                        Scaffold.of(context)
+                                                            .showSnackBar(
+                                                                SnackBar(
+                                                          content: Text(
+                                                              "Server Error...."),
+                                                        ));
+                                                      }
+                                                      // socketIO.sendMessage(
+                                                      //     "complete",
+                                                      // json.encode({
+                                                      //   "body": {
+                                                      //     "transaction_id":
+                                                      //         int.parse(_bankData[
+                                                      //                 index][
+                                                      //             "transaction_id"]),
+                                                      //     "manager": "8146992621",
+                                                      //   }
+                                                      // }));
+                                                      //     http.post(completeTransacion,
+                                                      //         headers: headers,
+                                                      //         body:
+                                                      //             // "body":{"transaction_id":  int.parse(_bankData[index]["transaction_id"]),"manager": managerMobile});
+                                                      //  );
+                                                    },
+                                                  ),
+                                                  Container(
+                                                      height: 17,
+                                                      child: Row(
+                                                          children: <Widget>[
+                                                            Radio(
+                                                              value: 0,
+                                                              groupValue:
+                                                                  _selectedRadio,
+                                                              onChanged: (val) {
+                                                                print(val);
+                                                                setSelectedRadio(
+                                                                    val);
+                                                              },
+                                                            ),
+                                                            Text("Okay")
+                                                          ])),
+                                                  Container(
+                                                      height: 17,
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceAround,
+                                                        children: <Widget>[
+                                                          Radio(
+                                                            value: 1,
+                                                            groupValue:
+                                                                _selectedRadio,
+                                                            onChanged: (val) {
+                                                              print(val);
+                                                              setSelectedRadio(
+                                                                  val);
+                                                            },
+                                                          ),
+                                                          Text("Damaged"),
+                                                        ],
+                                                      )),
+                                                ],
+                                              )
+                                      ],
+                                    )),
+                              ));
+                            }),
+                        width: double.infinity,
+                        // height: MediaQuery.of(context).size.height - 144,
+                        // height: MediaQuery.of(context).size.height / 10 * 8 -18,
+                        decoration: BoxDecoration(
+                            color: Color(0xfffe9263),
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                topLeft: Radius.circular(10))),
+                      ),
                     ),
-                  ),
 
-            // )
-            // : Container(
-            //     width: double.infinity,
-            //     height: MediaQuery.of(context).size.height - 144,
-            //     decoration: BoxDecoration(
-            //         color: Color(0xfffe9263),
-            //         borderRadius: BorderRadius.only(
-            //             topRight: Radius.circular(10),
-            //             topLeft: Radius.circular(10))),
-            //     child: Center(
-            //         child: Text(
-            //       "No Pending \nRequests",
-            //       style: TextStyle(
-            //         color: Colors.white,
-            //         fontSize: 30,
-            //         fontWeight: FontWeight.bold,
-            //       ),
-            //       textAlign: TextAlign.center,
-            //     )),
-            // ),
-          ],
+              // )
+              // : Container(
+              //     width: double.infinity,
+              //     height: MediaQuery.of(context).size.height - 144,
+              //     decoration: BoxDecoration(
+              //         color: Color(0xfffe9263),
+              //         borderRadius: BorderRadius.only(
+              //             topRight: Radius.circular(10),
+              //             topLeft: Radius.circular(10))),
+              //     child: Center(
+              //         child: Text(
+              //       "No Pending \nRequests",
+              //       style: TextStyle(
+              //         color: Colors.white,
+              //         fontSize: 30,
+              //         fontWeight: FontWeight.bold,
+              //       ),
+              //       textAlign: TextAlign.center,
+              //     )),
+              // ),
+            ],
+          ),
         ),
-      ),
-    ));
+      )),
+    );
   }
 
   Widget _button(String title, Function onPressed, Color col) {
@@ -655,8 +664,8 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                           _helmetNumber.clear();
                           // socketIO.unSubscribesAll();
                           // socketIO.disconnect();
-                          // socket.disconnect();
-                          // socket.close();
+                          socket.disconnect();
+                          socket.close();
                           check = 0;
                           //                     Navigator.pushAndRemoveUntil(
                           // context,

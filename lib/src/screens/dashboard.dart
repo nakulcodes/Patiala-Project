@@ -5,12 +5,8 @@ import 'package:http/http.dart' as http;
 
 class Dashboard extends StatefulWidget {
   int q;
-  // BuildContext context;
-  // TextEditingController _nameContro;
-  // TextEditingController _passContro;
-  // Dashboard();
+
   _DashboardState createState() => _DashboardState();
-  // bottom: bottom, perDash: perDash, count: count);
 }
 
 class _DashboardState extends State<Dashboard> {
@@ -118,9 +114,10 @@ class _DashboardState extends State<Dashboard> {
       availUser = _responseData["available_helmets"];
       totalUser = _responseData["total_helmets"];
       data = _responseData["banks"];
-      setState(() {
-        check1 = true;
-      });
+      if (mounted)
+        setState(() {
+          check1 = true;
+        });
     }
   }
 
@@ -194,6 +191,9 @@ class _DashboardState extends State<Dashboard> {
                         //   width: 15,
                         // ),
                         _listBuild(),
+                        SizedBox(
+                          height: 10,
+                        ),
                         _avail(context),
                       ],
                     ),
@@ -201,6 +201,94 @@ class _DashboardState extends State<Dashboard> {
                 ),
               )
             : ColorLoader5());
+  }
+
+  Widget dia(String title, var _data) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: <Widget>[
+        Text(title + " : "),
+        Text(_data,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+
+  Future<Widget> _dialog(BuildContext _context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            title:
+                // Center(
+                //     child:
+                Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Text("Your Account",
+                    style:
+                        TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                SizedBox(
+                  height: 10,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        dia("Name", nameUser),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        dia("Mobile", number),
+                      ],
+                    ),
+                  ],
+                )
+
+                // dia("Email","nakulgarg2000@gmail.com"),
+              ],
+              // ),
+            ),
+            actions: [
+              InkWell(
+                  child: _logout("Logout", Color(0xfffe9263), () {
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => LoginPage(),
+                    ),
+                    (route) => false);
+              })),
+            ],
+          );
+        });
+  }
+
+  Widget _logout(String title, Color col, Function onPressed) {
+    return Center(
+      child: Container(
+        width: 120,
+        height: 40,
+        decoration: BoxDecoration(
+            color: col, borderRadius: BorderRadius.all(Radius.circular(5))),
+        child: InkWell(
+          onTap: onPressed,
+          child: Center(
+              child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          )),
+        ),
+      ),
+    );
   }
 
   Widget _topHome() {
@@ -234,7 +322,10 @@ class _DashboardState extends State<Dashboard> {
                 CircleAvatar(
                   backgroundColor: Colors.black,
                   radius: 30.0,
-                )
+                  child: GestureDetector(onTap: () {
+                    _dialog(context);
+                  }),
+                ),
               ],
             ),
           ),
@@ -298,11 +389,14 @@ class _DashboardState extends State<Dashboard> {
 
   Widget _listBuild() {
     return Container(
-      margin: title == "guest"?EdgeInsets.only(top:13):EdgeInsets.only(top:5),
+      margin:
+          title == "guest" ? EdgeInsets.only(top: 13) : EdgeInsets.only(top: 5),
       decoration: BoxDecoration(
         color: Color(0xfffe9263),
       ),
-      height: title == "guest"?MediaQuery.of(context).size.height / 1.7:MediaQuery.of(context).size.height / 2.0,
+      height: title == "guest"
+          ? MediaQuery.of(context).size.height / 1.7
+          : MediaQuery.of(context).size.height / 2.0,
       child: ListView.builder(
           itemCount: data == null ? 0 : data.length,
           padding: EdgeInsets.all(5),
@@ -404,6 +498,7 @@ class _DashboardState extends State<Dashboard> {
                     String _id1 = data[getIndex()]["bank_id"];
                     print(_id1);
                     bookHelmetData(_id1, context);
+
                     setState(() {
                       r = 0;
                     });
@@ -417,57 +512,4 @@ class _DashboardState extends State<Dashboard> {
           ),
         ));
   }
-
-  // Widget _bottomNavBar() {
-  //   return CurvedNavigationBar(
-  //     height: 50,
-  //     backgroundColor: Color(0xfffe9263),
-  //     items: <Widget>[
-  //       Icon(Icons.home, size: 30),
-  //       Icon(Icons.history, size: 30),
-  //       Icon(Icons.account_circle, size: 30),
-  //     ],
-  //     onTap: (index) {
-  //       //Handle button tap
-  //       print(index);
-  //       if (index == 1) {
-  //         Navigator.pushReplacement(
-  //             context,
-  //             MaterialPageRoute(
-  //               builder: (context) => History(),
-  //             ));
-  //       }
-  //       if (index == 2) {
-  //         Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //               builder: (context) => Account(),
-  //             ));
-  //       }
-  //     },
-  //   );
-  // }
-
-  // Widget _logout() {
-  //   return Container(
-  //       height: 50,
-  //       // margin: EdgeInsets.symmetric(vertical: 20),
-  //       child: ButtonTheme(
-  //         minWidth: MediaQuery.of(context).size.width - 20.0,
-  //         height: 100.0,
-  //         child: RaisedButton(
-  //           shape: RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.circular(8.0),
-  //             // side: BorderSide(color: Colors.red)
-  //           ),
-  //           color: Colors.white,
-  //           onPressed: () => Navigator.pop(context),
-  //           child: Text('Logout',
-  //               style: TextStyle(
-  //                   color: Color(0xfffe9263),
-  //                   fontSize: 18,
-  //                   fontWeight: FontWeight.w400)),
-  //         ),
-  //       ));
-  // }
 }

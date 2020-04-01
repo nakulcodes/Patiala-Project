@@ -28,5 +28,4 @@ export 'package:flutter/services.dart';
 
 export 'src/accDetails.dart';
 
-export 'package:flutter_socket_io/flutter_socket_io.dart';
-export 'package:flutter_socket_io/socket_io_manager.dart';
+

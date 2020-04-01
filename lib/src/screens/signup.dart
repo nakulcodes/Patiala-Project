@@ -1,4 +1,8 @@
+// import 'dart:html';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter_login_signup/allFiles.dart';
+import 'dart:io';
+import 'dart:convert';
 
 final snackBarRegister = SnackBar(
   content: Text("Registered Sucesfully"),
@@ -28,6 +32,9 @@ class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<ScaffoldState> scaffoldKeyReg =
       new GlobalKey<ScaffoldState>();
   int selectedRadio;
+
+  bool image;
+  File file;
 
   void initState() {
     super.initState();
@@ -73,7 +80,7 @@ class _SignUpPageState extends State<SignUpPage> {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
           SizedBox(
-            height: 10,
+            height: 5,
           ),
           TextField(
               controller: contro,
@@ -98,7 +105,7 @@ class _SignUpPageState extends State<SignUpPage> {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
           SizedBox(
-            height: 10,
+            height: 5,
           ),
           StreamBuilder<String>(
             stream: bloc1.email,
@@ -135,15 +142,8 @@ class _SignUpPageState extends State<SignUpPage> {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
           SizedBox(
-            height: 10,
+            height: 5,
           ),
-          // TextFormField(
-          //     controller: contr,
-          //     obscureText: isPassword,
-          //     decoration: InputDecoration(
-          //         border: InputBorder.none,
-          //         fillColor: Color(0xfff3f3f4),
-          //         filled: true))
           StreamBuilder<String>(
             stream: bloc1.password,
             builder: (context, snapshot) => TextField(
@@ -179,7 +179,7 @@ class _SignUpPageState extends State<SignUpPage> {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
           SizedBox(
-            height: 10,
+            height: 5,
           ),
           StreamBuilder<String>(
             stream: bloc1.number,
@@ -188,6 +188,7 @@ class _SignUpPageState extends State<SignUpPage> {
               onSubmitted: (e) {
                 print(e);
               },
+              maxLength: 10,
               onChanged: bloc1.numberChanged,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
@@ -222,12 +223,13 @@ class _SignUpPageState extends State<SignUpPage> {
             SystemChannels.textInput.invokeMethod('TextInput.hide');
 
             if (selectedRadio == 0) {
-              registerUser(context, _regName, _regEmail, _regPhone, _regPass);
+              // print(file.path);
+              registerUser(
+                  context, _regName, _regEmail, _regPhone, _regPass, file);
+            } else if (selectedRadio == 1) {
+              registerManager(
+                  context, _regName, _regEmail, _regPhone, _regPass, file);
             }
-          else if(selectedRadio ==1){
-            registerManager(context, _regName, _regEmail, _regPhone, _regPass);
-
-          }
 
             // Scaffold.of(context).showSnackBar(snackBarRegister);
           },
@@ -241,48 +243,6 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  // Widget _loginAccountLabel() {
-  //   return Container(
-  //     margin: EdgeInsets.symmetric(vertical: 20),
-  //     alignment: Alignment.bottomCenter,
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: <Widget>[
-  //         Text(
-  //           'Already have an account ?',
-  //           style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-  //         ),
-  //         SizedBox(
-  //           width: 10,
-  //         ),
-  //         InkWell(
-  //           onTap: () {
-  //             Navigator.push(context,
-  //                 MaterialPageRoute(builder: (context) => LoginPage()));
-  //           },
-  //           child: Text(
-  //             'Login',
-  //             style: TextStyle(
-  //                 color: Color(0xfff79c4f),
-  //                 fontSize: 13,
-  //                 fontWeight: FontWeight.w600),
-  //           ),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  Widget _title() {
-    return Container(
-      height: 200,
-      width: 200,
-      child: Image(
-        image: AssetImage("assets/images/road.png"),
-      ),
-    );
-  }
-
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
@@ -290,96 +250,95 @@ class _SignUpPageState extends State<SignUpPage> {
         _emailField("Email id", con: _regEmail),
         _numberField("Phone Number", con: _regPhone),
         _passField("Password", isPassword: true, con: _regPass),
-        // _entryField("Phone Number"),
-        // _entryField("Email id"),
-        // _entryField("Password", isPassword: true),
+        _entryField(
+          "Address",
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Radio(
+                  value: 0,
+                  groupValue: selectedRadio,
+                  onChanged: (val) {
+                    print(val);
+                    setSelectedRadio(val);
+                  },
+                ),
+                Text("User"),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Radio(
+                  value: 1,
+                  groupValue: selectedRadio,
+                  onChanged: (val) {
+                    print(val);
+                    setSelectedRadio(val);
+                  },
+                ),
+                Text("Manager"),
+              ],
+            ),
+          ],
+        ),
       ],
+      // ),
     );
+  }
+
+  void _choose() async {
+    file = await ImagePicker.pickImage(source: ImageSource.camera);
+    if (file == null) {
+      return;
+    } else {
+      setState(() {
+        image = true;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Builder(
-        builder: (context) => SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-            height: MediaQuery.of(context).size.height,
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        flex: 3,
-                        child: SizedBox(),
-                      ),
-                      _title(),
-                      // SizedBox(
-                      //   height: 50,
-                      // ),
-                      _emailPasswordWidget(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                Radio(
-                                  value: 0,
-                                  groupValue: selectedRadio,
-                                  onChanged: (val) {
-                                    print(val);
-                                    setSelectedRadio(val);
-                                  },
+    return SafeArea(
+      child: Scaffold(
+        body: Builder(
+          builder: (context) => SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: _choose,
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Color(0xfffe9263),
+                        // backgroundImage: file==null?null:Image.file(file),
+                        child: image == null
+                            ? Icon(
+                                Icons.camera_alt,
+                                color: Colors.black,
+                                size: 50,
+                              )
+                            : ClipRRect(
+                                borderRadius: new BorderRadius.circular(100.0),
+                                child: Image.file(
+                                  file,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
                                 ),
-                                Text("User"),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                Radio(
-                                  value: 1,
-                                  groupValue: selectedRadio,
-                                  onChanged: (val) {
-                                    print(val);
-                                    setSelectedRadio(val);
-                                  },
-                                ),
-                                Text("Manager"),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )),
-                      _submitButton(context),
-                      Expanded(
-                        flex: 2,
-                        child: SizedBox(),
+                              ),
                       ),
-                      
-                    ],
-                  ),
-                ),
-                // Align(
-                //   alignment: Alignment.bottomCenter,
-                //   child: _loginAccountLabel(),
-                // ),
-                Positioned(top: 40, left: 0, child: _backButton()),
-                // Positioned(
-                //     top: -MediaQuery.of(context).size.height * .15,
-                //     right: -MediaQuery.of(context).size.width * .4,
-                //     child: BezierContainer())
-              ],
+                    ),
+                    SizedBox(height: 10,),
+                    _emailPasswordWidget(),
+                    _submitButton(context),
+                  ]),
             ),
           ),
         ),
@@ -387,3 +346,69 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 }
+//  if(file==null)return null;
+//             Expanded(
+//               flex: 2,
+//               child: SizedBox(),
+//             ),
+//           ],
+//         ),
+//       ),
+// Positioned(top: 40, left: 0, child: _backButton()),
+//       ],
+//       ),
+//       ),
+//             ),
+//           ),
+//     ),
+//   );
+// }
+//   return SafeArea(
+//     child: Scaffold(
+//       resizeToAvoidBottomPadding: false,
+//       body: Stack(
+//         children: <Widget>[
+//           Positioned(top: 10, left: 3, child: _backButton()),
+//           Positioned(
+//             top: 30,
+//            left:100,
+//             child: Text("Register Here"),
+//           ),
+//           Container(
+//             // child: SingleChildScrollView(
+//               child: Positioned(
+//                 // top: 95,
+//                 child: Container(
+//                   width: MediaQuery.of(context).size.width,
+//                   height: MediaQuery.of(context).size.height,
+//                   // color: Colors.blueAccent,
+//                   padding: EdgeInsets.fromLTRB(20, 10, 20, 5),
+//                   // child: SingleChildScrollView(
+//                   child: Column(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: <Widget>[
+//                       _emailPasswordWidget(),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           // ),
+
+//           // Positioned(
+//           //   child: _submitButton(context),
+//           //   bottom: 5,
+//           //   right: 20,
+//           //   left: 20,
+//           // ),
+//           // )
+//         ],
+//       ),
+//     ),
+//   );
+//   // );
+
+//   // }
+//      }
+
+// }

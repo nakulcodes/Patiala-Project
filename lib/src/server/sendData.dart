@@ -1,9 +1,9 @@
+import 'dart:io';
+import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
 import 'package:flutter_login_signup/allFiles.dart';
-
-
 
 class LoginLoaderUser extends StatefulWidget {
   BuildContext context;
@@ -19,8 +19,8 @@ class LoginLoaderUser extends StatefulWidget {
 class _LoginLoaderUserState extends State<LoginLoaderUser> {
   void loginCheck() async {
     print("Coming.........");
-    String name = widget._nameContro.text;
-    String pass = widget._passContro.text;
+    String name = widget._nameContro.text.replaceAll(' ','');
+    String pass = widget._passContro.text.replaceAll(' ','');
     String data = '{"email":"$name","password":"$pass"}';
 
     var response = await http.post(userLogin, headers: headers, body: data);
@@ -31,10 +31,9 @@ class _LoginLoaderUserState extends State<LoginLoaderUser> {
 
     print(respbody["status"]);
     setUser(respbody, true);
-setTitle("reg_user");
+    setTitle("reg_user");
     if (response.statusCode == 200) {
       if (respbody["status"] == "true") {
-
         widget._nameContro.clear();
         widget._passContro.clear();
 
@@ -108,7 +107,9 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
         // print(person.namee);
 
         Navigator.push(widget.context,
-            MaterialPageRoute(builder: (context) => ManagerDashboard ()));
+            MaterialPageRoute(builder: (context) => ManagerDashboard()));
+
+            // Navigator.pushReplacementNamed(context, )
       } else if (respbody["status"] == "false") {
         // print(person.namee);
         Navigator.pop(context);
@@ -140,12 +141,13 @@ void registerUser(
     TextEditingController regNameData,
     TextEditingController regEmailData,
     TextEditingController regPhoneData,
-    TextEditingController regPassData) async {
+    TextEditingController regPassData,
+    File _image) async {
   // Scaffold.of(context).showSnackBar(snackBarRegister);
   String nameReg = regNameData.text;
-  String emailReg = regEmailData.text;
+  String emailReg = regEmailData.text.replaceAll(' ', '');
   String phoneReg = regPhoneData.text;
-  String passReg = regPassData.text;
+  String passReg = regPassData.text.replaceAll(' ', '');
 
   print("$nameReg+$emailReg+$phoneReg+$passReg");
   String dataReg =
@@ -165,6 +167,24 @@ void registerUser(
     if (respbody["status"] == "true") {
       print("Registered.....");
       Scaffold.of(context1).showSnackBar(snackBarRegister);
+      ftpClient.connect();
+      print(_image.path);
+      try {
+        print("Tryingg");
+        ftpClient.changeDirectory("/Images/User/");
+        ftpClient.makeDirectory(emailReg);
+        ftpClient.changeDirectory(emailReg);
+
+        ftpClient.uploadFile(_image);
+        // Duration(seconds: 4);
+        // print(_image.path.split("/").last);
+        // ftpClient.changeDirectory(emailReg);
+        // ftpClient.rename(_image.path.split("/").last, emailReg);
+      } finally {
+        ftpClient.disconnect();
+            _image.delete();
+      }
+  
       Navigator.pop(context1);
     }
     if (respbody["status"] == "false") {
@@ -175,12 +195,14 @@ void registerUser(
     }
   }
 }
+
 void registerManager(
     BuildContext context1,
     TextEditingController regNameData,
     TextEditingController regEmailData,
     TextEditingController regPhoneData,
-    TextEditingController regPassData) async {
+    TextEditingController regPassData,
+    File _image) async {
   // Scaffold.of(context).showSnackBar(snackBarRegister);
   String nameReg = regNameData.text;
   String emailReg = regEmailData.text;
@@ -192,7 +214,7 @@ void registerManager(
       '{"phone": "$phoneReg","name": "$nameReg","password":"$passReg","DOB":"null","email":"$emailReg","s3_link":"null"}';
 
   var responseReg =
-  await http.post(managerRegister, headers: headers, body: dataReg);
+      await http.post(managerRegister, headers: headers, body: dataReg);
   String resp = responseReg.body;
 
   var respbody = json.decode(resp);
@@ -206,11 +228,30 @@ void registerManager(
     if (respbody["status"] == "true") {
       print("Registered.....");
       Scaffold.of(context1).showSnackBar(snackBarRegisterManager);
+       ftpClient.connect();
+      print(_image.path);
+      try {
+        print("Tryingg");
+        ftpClient.changeDirectory("/Images/Manager/");
+        ftpClient.makeDirectory(emailReg);
+        ftpClient.changeDirectory(emailReg);
+
+        ftpClient.uploadFile(_image);
+        // Duration(seconds: 4);
+        // print(_image.path.split("/").last);
+        // ftpClient.changeDirectory(emailReg);
+        // ftpClient.rename(_image.path.split("/").last, emailReg);
+      } finally {
+        ftpClient.disconnect();
+            _image.delete();
+      }
       Navigator.pop(context1);
     }
     if (respbody["status"] == "false") {
       print("Error");
-      Scaffold.of(context1).showSnackBar(SnackBar(content: Text("Error in Registering as Manager...."),));
+      Scaffold.of(context1).showSnackBar(SnackBar(
+        content: Text("Error in Registering as Manager...."),
+      ));
       // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
 
     }
@@ -236,8 +277,7 @@ void sendGuestData(
   var _respbodyGuest = json.decode(respGuest);
 
   setUser(_respbodyGuest, false);
-   setTitle("guest");
-
+  setTitle("guest");
 
   if (responseGuest.statusCode == 200) {
     _guestNameData.clear();
