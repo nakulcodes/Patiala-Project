@@ -1,11 +1,15 @@
 import 'package:flutter_login_signup/allFiles.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:image_picker/image_picker.dart';
 
 final TextEditingController _guestName = TextEditingController();
 final TextEditingController _guestEmail = TextEditingController();
 final TextEditingController _guestNumber = TextEditingController();
+final TextEditingController _guestAdd = TextEditingController();
 Bloc bloc = new Bloc();
 final snackBarErrorGuest = SnackBar(
-  content: Text("Error!Try Again Later"),
+  content: Text("Error! Try Again Later"),
 );
 
 class GuestLogin extends StatefulWidget {
@@ -14,6 +18,8 @@ class GuestLogin extends StatefulWidget {
 }
 
 class _GuestLoginState extends State<GuestLogin> {
+  File file;
+  bool image;
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -87,7 +93,8 @@ class _GuestLoginState extends State<GuestLogin> {
           onPressed: () {
             print("Guest Login Pressed");
             // SystemChannels.textInput.invokeMethod('TextInput.hide');
-            sendGuestData(context, _guestName, _guestEmail, _guestNumber);
+            sendGuestData(context, _guestName, _guestEmail, _guestNumber,_guestAdd,file);
+            // file.delete();
 
             // Scaffold.of(context).showSnackBar(snackBarRegister);
           },
@@ -151,6 +158,7 @@ class _GuestLoginState extends State<GuestLogin> {
           StreamBuilder<String>(
             stream: bloc1.number,
             builder: (context, snapshot) => TextField(
+              maxLength: 10,
               controller: con,
               onSubmitted: (e) {
                 print(e);
@@ -178,6 +186,7 @@ class _GuestLoginState extends State<GuestLogin> {
 
         _emailField("Email id", con: _guestEmail),
         _numberField("Phone Number", con: _guestNumber),
+        _nameField("Address",contro:_guestAdd)
 
         // _entryField("Phone Number"),
         // _entryField("Email id"),
@@ -186,43 +195,106 @@ class _GuestLoginState extends State<GuestLogin> {
     );
   }
 
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     body: Builder(
+  //       builder: (context) => SingleChildScrollView(
+  //         child: Container(
+  //           margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+  //           height: MediaQuery.of(context).size.height,
+  //           child: Stack(
+  //             children: <Widget>[
+  //               Container(
+  //                 padding: EdgeInsets.symmetric(horizontal: 20),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.center,
+  //                   mainAxisAlignment: MainAxisAlignment.center,
+  //                   children: <Widget>[
+  //                     Expanded(
+  //                       flex: 3,
+  //                       child: SizedBox(),
+  //                     ),
+  //                     _title(),
+  //                     _emailPasswordWidget(),
+  //                     SizedBox(
+  //                       height: 20,
+  //                     ),
+  //                     _submitButton(context),
+  //                     Expanded(
+  //                       flex: 2,
+  //                       child: SizedBox(),
+  //                     )
+  //                   ],
+  //                 ),
+  //               ),
+  //               Positioned(top: 40, left: 0, child: _backButton()),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+  void _choose() async {
+    file = await ImagePicker.pickImage(source: ImageSource.camera);
+    if (file == null) {
+      return;
+    } else {
+      setState(() {
+        image = true;
+      });
+    }
+  }
+    @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Builder(
-        builder: (context) => SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-            height: MediaQuery.of(context).size.height,
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
+    return SafeArea(
+      child: Scaffold(
+        body: Builder(
+          builder: (context) => SingleChildScrollView(
+            child: Stack(children: <Widget>[
+              Positioned(top: 0, left: 0, child: _backButton()),
+              Container(
+                padding: EdgeInsets.all(15),
+                child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Expanded(
-                        flex: 3,
-                        child: SizedBox(),
+                      // Positioned(child: _backButton(),top: 5,left: 5,),
+                      GestureDetector(
+                        onTap: _choose,
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Color(0xfffe9263),
+                          // backgroundImage: file==null?null:Image.file(file),
+                          child: image == null
+                              ? Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.black,
+                                  size: 50,
+                                )
+                              : ClipRRect(
+                                  borderRadius:
+                                      new BorderRadius.circular(100.0),
+                                  child: Image.file(
+                                    file,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                        ),
                       ),
-                      _title(),
-                      _emailPasswordWidget(),
                       SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
+                      _emailPasswordWidget(),
                       _submitButton(context),
-                      Expanded(
-                        flex: 2,
-                        child: SizedBox(),
-                      )
-                    ],
-                  ),
-                ),
-                Positioned(top: 40, left: 0, child: _backButton()),
-              ],
-            ),
+                    ]),
+              ),
+            ]),
           ),
         ),
+        // ),
       ),
     );
   }

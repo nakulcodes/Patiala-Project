@@ -19,8 +19,8 @@ class LoginLoaderUser extends StatefulWidget {
 class _LoginLoaderUserState extends State<LoginLoaderUser> {
   void loginCheck() async {
     print("Coming.........");
-    String name = widget._nameContro.text.replaceAll(' ','');
-    String pass = widget._passContro.text.replaceAll(' ','');
+    String name = widget._nameContro.text.replaceAll(' ', '');
+    String pass = widget._passContro.text.replaceAll(' ', '');
     String data = '{"email":"$name","password":"$pass"}';
 
     var response = await http.post(userLogin, headers: headers, body: data);
@@ -109,7 +109,7 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
         Navigator.push(widget.context,
             MaterialPageRoute(builder: (context) => ManagerDashboard()));
 
-            // Navigator.pushReplacementNamed(context, )
+        // Navigator.pushReplacementNamed(context, )
       } else if (respbody["status"] == "false") {
         // print(person.namee);
         Navigator.pop(context);
@@ -142,16 +142,17 @@ void registerUser(
     TextEditingController regEmailData,
     TextEditingController regPhoneData,
     TextEditingController regPassData,
+    TextEditingController regAddData,
     File _image) async {
   // Scaffold.of(context).showSnackBar(snackBarRegister);
   String nameReg = regNameData.text;
   String emailReg = regEmailData.text.replaceAll(' ', '');
   String phoneReg = regPhoneData.text;
   String passReg = regPassData.text.replaceAll(' ', '');
-
-  print("$nameReg+$emailReg+$phoneReg+$passReg");
+  String addReg = regAddData.text;
+  print("$nameReg+$emailReg+$phoneReg+$passReg+$addReg");
   String dataReg =
-      '{"phone": "$phoneReg","name": "$nameReg","password":"$passReg","DOB":"null","email":"$emailReg","s3_link":"null"}';
+      '{"phone": "$phoneReg","name": "$nameReg","password":"$passReg","DOB":"null","email":"$emailReg","s3_link":"null","address":"$addReg"}';
 
   var responseReg =
       await http.post(userRegister, headers: headers, body: dataReg);
@@ -164,6 +165,7 @@ void registerUser(
     regEmailData.clear();
     regPhoneData.clear();
     regPassData.clear();
+    regAddData.clear();
     if (respbody["status"] == "true") {
       print("Registered.....");
       Scaffold.of(context1).showSnackBar(snackBarRegister);
@@ -182,9 +184,9 @@ void registerUser(
         // ftpClient.rename(_image.path.split("/").last, emailReg);
       } finally {
         ftpClient.disconnect();
-            _image.delete();
+        // _image.delete();
       }
-  
+
       Navigator.pop(context1);
     }
     if (respbody["status"] == "false") {
@@ -202,16 +204,18 @@ void registerManager(
     TextEditingController regEmailData,
     TextEditingController regPhoneData,
     TextEditingController regPassData,
+    TextEditingController regAddData,
     File _image) async {
   // Scaffold.of(context).showSnackBar(snackBarRegister);
   String nameReg = regNameData.text;
-  String emailReg = regEmailData.text;
-  String phoneReg = regPhoneData.text;
-  String passReg = regPassData.text;
+  String emailReg = regEmailData.text.replaceAll(' ', '');
+  String phoneReg = regPhoneData.text.replaceAll(' ', '');
+  String passReg = regPassData.text.replaceAll(' ', '');
+  String addReg = regAddData.text;
 
   print("$nameReg+$emailReg+$phoneReg+$passReg");
   String dataReg =
-      '{"phone": "$phoneReg","name": "$nameReg","password":"$passReg","DOB":"null","email":"$emailReg","s3_link":"null"}';
+      '{"phone": "$phoneReg","name": "$nameReg","password":"$passReg","DOB":"null","email":"$emailReg","s3_link":"null","address":"$addReg"}';
 
   var responseReg =
       await http.post(managerRegister, headers: headers, body: dataReg);
@@ -225,11 +229,13 @@ void registerManager(
     regEmailData.clear();
     regPhoneData.clear();
     regPassData.clear();
+
+    regAddData.clear();
     if (respbody["status"] == "true") {
       print("Registered.....");
       Scaffold.of(context1).showSnackBar(snackBarRegisterManager);
-       ftpClient.connect();
-      print(_image.path);
+      ftpClient.connect();
+
       try {
         print("Tryingg");
         ftpClient.changeDirectory("/Images/Manager/");
@@ -243,7 +249,6 @@ void registerManager(
         // ftpClient.rename(_image.path.split("/").last, emailReg);
       } finally {
         ftpClient.disconnect();
-            _image.delete();
       }
       Navigator.pop(context1);
     }
@@ -259,17 +264,19 @@ void registerManager(
 }
 
 void sendGuestData(
-  BuildContext guestContext,
-  TextEditingController _guestNameData,
-  TextEditingController _guestEmailData,
-  TextEditingController _guestPhoneData,
-) async {
+    BuildContext guestContext,
+    TextEditingController _guestNameData,
+    TextEditingController _guestEmailData,
+    TextEditingController _guestPhoneData,
+    TextEditingController _guestAddData,
+    File _image) async {
   String nameGuest = _guestNameData.text;
-  String emailGuest = _guestEmailData.text;
+  String emailGuest = _guestEmailData.text.replaceAll(' ', '');
   String phoneGuest = _guestPhoneData.text;
+  String addGuest = _guestAddData.text;
   print("$nameGuest,$emailGuest,$phoneGuest");
   String dataGuest =
-      '{"phone": "$phoneGuest","name": "$nameGuest","email":"$emailGuest"}';
+      '{"phone": "$phoneGuest","name": "$nameGuest","email":"$emailGuest","address":"$addGuest"}';
   var responseGuest =
       await http.post(guestLogin, headers: headers, body: dataGuest);
   String respGuest = responseGuest.body;
@@ -287,6 +294,23 @@ void sendGuestData(
 
     if (_respbodyGuest["status"] == "true") {
       print("GUesst Dataa");
+      ftpClient.connect();
+      print(_image.path);
+      try {
+        print("Tryingg");
+        ftpClient.changeDirectory("/Images/Guests/");
+        ftpClient.makeDirectory(emailGuest);
+        ftpClient.changeDirectory(emailGuest);
+
+        ftpClient.uploadFile(_image);
+        // Duration(seconds: 4);
+        // print(_image.path.split("/").last);
+        // ftpClient.changeDirectory(emailReg);
+        // ftpClient.rename(_image.path.split("/").last, emailReg);
+      } finally {
+        ftpClient.disconnect();
+        _image.delete();
+      }
       Navigator.push(
           guestContext, MaterialPageRoute(builder: (context) => Dashboard()));
     }

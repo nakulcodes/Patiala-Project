@@ -17,6 +17,7 @@ TextEditingController _regName = TextEditingController();
 TextEditingController _regEmail = TextEditingController();
 TextEditingController _regPhone = TextEditingController();
 TextEditingController _regPass = TextEditingController();
+TextEditingController _regAdd = TextEditingController();
 Bloc bloc1 = Bloc();
 
 class SignUpPage extends StatefulWidget {
@@ -225,10 +226,12 @@ class _SignUpPageState extends State<SignUpPage> {
             if (selectedRadio == 0) {
               // print(file.path);
               registerUser(
-                  context, _regName, _regEmail, _regPhone, _regPass, file);
+                  context, _regName, _regEmail, _regPhone, _regPass,_regAdd, file);
+                  // file.delete();
             } else if (selectedRadio == 1) {
               registerManager(
-                  context, _regName, _regEmail, _regPhone, _regPass, file);
+                  context, _regName, _regEmail, _regPhone, _regPass, _regAdd,file);
+                  // file.delete();
             }
 
             // Scaffold.of(context).showSnackBar(snackBarRegister);
@@ -250,9 +253,7 @@ class _SignUpPageState extends State<SignUpPage> {
         _emailField("Email id", con: _regEmail),
         _numberField("Phone Number", con: _regPhone),
         _passField("Password", isPassword: true, con: _regPass),
-        _entryField(
-          "Address",
-        ),
+        _entryField("Address",contro: _regAdd  ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -306,42 +307,50 @@ class _SignUpPageState extends State<SignUpPage> {
       child: Scaffold(
         body: Builder(
           builder: (context) => SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: _choose,
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Color(0xfffe9263),
-                        // backgroundImage: file==null?null:Image.file(file),
-                        child: image == null
-                            ? Icon(
-                                Icons.camera_alt,
-                                color: Colors.black,
-                                size: 50,
-                              )
-                            : ClipRRect(
-                                borderRadius: new BorderRadius.circular(100.0),
-                                child: Image.file(
-                                  file,
-                                  width: 100,
-                                  height: 100,
-                                  fit: BoxFit.cover,
+            child: Stack(children: <Widget>[
+              Positioned(top: 0, left: 0, child: _backButton()),
+              Container(
+                padding: EdgeInsets.all(15),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      // Positioned(child: _backButton(),top: 5,left: 5,),
+                      GestureDetector(
+                        onTap: _choose,
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Color(0xfffe9263),
+                          // backgroundImage: file==null?null:Image.file(file),
+                          child: image == null
+                              ? Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.black,
+                                  size: 50,
+                                )
+                              : ClipRRect(
+                                  borderRadius:
+                                      new BorderRadius.circular(100.0),
+                                  child: Image.file(
+                                    file,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10,),
-                    _emailPasswordWidget(),
-                    _submitButton(context),
-                  ]),
-            ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      _emailPasswordWidget(),
+                      _submitButton(context),
+                    ]),
+              ),
+            ]),
           ),
         ),
+        // ),
       ),
     );
   }
