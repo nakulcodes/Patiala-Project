@@ -3,6 +3,7 @@ import 'package:flutter_login_signup/check.dart';
 import 'package:flutter_login_signup/src/screens/storedata.dart';
 import 'package:http/http.dart' as http;
 
+
 class Dashboard extends StatefulWidget {
   int q;
 
@@ -273,8 +274,8 @@ class _DashboardState extends State<Dashboard> {
                 //   width: 130.0,
                 // ),
                 CircleAvatar(
-                  // backgroundColor: Colors.black,
-                  // backgroundImage: ,
+                  backgroundColor: Color(0xfffe9263),
+                  // backgroundImage: Icon()
 
                   radius: 30.0,
                   child: GestureDetector(

@@ -168,14 +168,11 @@ void registerUser(BuildContext context1, String nameReg, String emailReg,
         ftpClient.changeDirectory(emailReg);
 
         ftpClient.uploadFile(_image);
-      }
-      catch(e){
+      } catch (e) {
         print(e);
       } finally {
         ftpClient.disconnect();
-        // _image.delete();
       }
-
       Navigator.pop(context1);
     }
     if (respbody["status"] == "false") {
@@ -217,6 +214,7 @@ void registerManager(BuildContext context1, String nameReg, String emailReg,
     if (respbody["status"] == "true") {
       print("Registered.....");
       Scaffold.of(context1).showSnackBar(snackBarRegisterManager);
+      Duration(seconds: 2);
       ftpClient.connect();
 
       try {
@@ -232,8 +230,8 @@ void registerManager(BuildContext context1, String nameReg, String emailReg,
         // ftpClient.rename(_image.path.split("/").last, emailReg);
       } finally {
         ftpClient.disconnect();
+        Navigator.pop(context1);
       }
-      Navigator.pop(context1);
     }
     if (respbody["status"] == "false") {
       print("Error");

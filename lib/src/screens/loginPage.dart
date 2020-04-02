@@ -1,5 +1,6 @@
 import 'package:flutter_login_signup/allFiles.dart';
 import 'package:flutter_login_signup/src/screens/guestLogin.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final nameContro = TextEditingController();
 final passContro = TextEditingController();
@@ -31,6 +32,16 @@ class _LoginPageState extends State<LoginPage> {
       selectedRadio = val;
     });
   }
+
+  _launchURL() async {
+  const url = 'https://hlmt.herokuapp.com/user/forgot';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
+
 
   Widget _emailField(String title, {TextEditingController con}) {
     return Container(
@@ -327,7 +338,7 @@ class _LoginPageState extends State<LoginPage> {
                         padding: EdgeInsets.symmetric(vertical: 5.0),
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
-                          onTap: () => print("Forgot Password"),
+                          onTap: _launchURL,
                           child: Text('Forgot Password ?',
                               style: TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.w500)),

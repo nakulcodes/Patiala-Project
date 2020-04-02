@@ -264,6 +264,8 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                     CrossAxisAlignment.start,
                                                 children: <Widget>[
                                                   CircleAvatar(
+                                                    backgroundColor:
+                                                        Color(0xfffe9263),
                                                     radius: 30,
                                                     child: ClipRRect(
                                                       borderRadius:
@@ -301,9 +303,9 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                                   FontWeight
                                                                       .bold)),
                                                 ]),
-                                            SizedBox(
-                                              width: 7,
-                                            ),
+                                            // SizedBox(
+                                            //   width: 7,
+                                            // ),
                                             Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceEvenly,
@@ -352,120 +354,127 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                               )
                                             : Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                                    MainAxisAlignment
+                                                        .spaceAround,
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: <Widget>[
-                                                  _helmetReturnButton(
-                                                    "Helmet\nRecieved",
-                                                    Colors.yellow,
-                                                    () async {
-                                                      print(
-                                                          "Helmet Recived Pressed");
-                                                      var completeData =
-                                                          await http.post(
-                                                              completeTransacion,
-                                                              headers: headers,
-                                                              body:
-                                                                  json.encode({
-                                                                "transaction_id":
-                                                                    int.parse(_bankData[
-                                                                            index]
-                                                                        [
-                                                                        "transaction_id"]),
-                                                                "manager":
-                                                                    _managerNumber,
-                                                                "foundfaulty":
-                                                                    _selectedRadio
-                                                              }));
+                                                  Expanded(
+                                                    child: _helmetReturnButton(
+                                                      "Helmet\nRecieved",
+                                                      Colors.yellow,
+                                                      () async {
+                                                        print(
+                                                            "Helmet Recived Pressed");
+                                                        var completeData =
+                                                            await http.post(
+                                                                completeTransacion,
+                                                                headers:
+                                                                    headers,
+                                                                body: json
+                                                                    .encode({
+                                                                  "transaction_id":
+                                                                      int.parse(
+                                                                          _bankData[index]
+                                                                              [
+                                                                              "transaction_id"]),
+                                                                  "manager":
+                                                                      _managerNumber,
+                                                                  "foundfaulty":
+                                                                      _selectedRadio
+                                                                }));
 
-                                                      var completeJson = json
-                                                          .decode(completeData
-                                                              .body);
-                                                      if (completeJson[
-                                                                  "status"] ==
-                                                              "true" &&
-                                                          completeData
-                                                                  .statusCode ==
-                                                              200) {
-                                                        Scaffold.of(context)
-                                                            .showSnackBar(
-                                                                SnackBar(
-                                                          content: Text(
-                                                              "Transaction Completed"),
-                                                        ));
-                                                        int _no = int.parse(
-                                                            availHelmets);
-                                                        setAvailHel((_no + 1)
-                                                            .toString());
-                                                        setState(() {
-                                                          availHelmets =
-                                                              getAvailHel();
-                                                          if (_bankData
-                                                                  .length ==
-                                                              1) {
-                                                            check = 0;
-                                                          }
-                                                          _bankData
-                                                              .removeAt(index);
-                                                        });
-                                                      } else {
-                                                        Scaffold.of(context)
-                                                            .showSnackBar(
-                                                                SnackBar(
-                                                          content: Text(
-                                                              "Server Error...."),
-                                                        ));
-                                                      }
-                                                    },
+                                                        var completeJson = json
+                                                            .decode(completeData
+                                                                .body);
+                                                        if (completeJson[
+                                                                    "status"] ==
+                                                                "true" &&
+                                                            completeData
+                                                                    .statusCode ==
+                                                                200) {
+                                                          Scaffold.of(context)
+                                                              .showSnackBar(
+                                                                  SnackBar(
+                                                            content: Text(
+                                                                "Transaction Completed"),
+                                                          ));
+                                                          int _no = int.parse(
+                                                              availHelmets);
+                                                          setAvailHel((_no + 1)
+                                                              .toString());
+                                                          setState(() {
+                                                            availHelmets =
+                                                                getAvailHel();
+                                                            if (_bankData
+                                                                    .length ==
+                                                                1) {
+                                                              check = 0;
+                                                            }
+                                                            _bankData.removeAt(
+                                                                index);
+                                                          });
+                                                        } else {
+                                                          Scaffold.of(context)
+                                                              .showSnackBar(
+                                                                  SnackBar(
+                                                            content: Text(
+                                                                "Server Error...."),
+                                                          ));
+                                                        }
+                                                      },
+                                                    ),
                                                   ),
                                                   Container(
-                                                    child: Column(
+                                                    height: 20,
+                                                    child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: <Widget>[
+                                                          Radio(
+                                                            materialTapTargetSize:
+                                                                MaterialTapTargetSize
+                                                                    .shrinkWrap,
+                                                            value: 0,
+                                                            groupValue:
+                                                                _selectedRadio,
+                                                            onChanged: (val) {
+                                                              print(val);
+                                                              setSelectedRadio(
+                                                                  val);
+                                                            },
+                                                          ),
+                                                          Text("Okay",style: TextStyle(fontSize: 13),)
+                                                        ]),
+                                                  ),
+                                                  Expanded(
+                                                    // height: 20,
+                                                    child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
                                                       children: <Widget>[
-                                                        Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceAround,
-                                                            children: <Widget>[
-                                                              Radio(
-                                                                value: 0,
-                                                                groupValue:
-                                                                    _selectedRadio,
-                                                                onChanged:
-                                                                    (val) {
-                                                                  print(val);
-                                                                  setSelectedRadio(
-                                                                      val);
-                                                                },
-                                                              ),
-                                                              Text("Okay")
-                                                            ]),
-                                                        Row(
-                                                          children: <Widget>[
-                                                            Radio(
-                                                              value: 1,
-                                                              groupValue:
-                                                                  _selectedRadio,
-                                                              onChanged: (val) {
-                                                                print(val);
-                                                                setSelectedRadio(
-                                                                    val);
-                                                              },
-                                                            ),
-                                                            Text("Damaged"),
-                                                          ],
-                                                        )
+                                                        Radio(
+                                                          materialTapTargetSize:
+                                                              MaterialTapTargetSize
+                                                                  .shrinkWrap,
+                                                          value: 1,
+                                                          groupValue:
+                                                              _selectedRadio,
+                                                          onChanged: (val) {
+                                                            print(val);
+                                                            setSelectedRadio(
+                                                                val);
+                                                          },
+                                                        ),
+                                                        Text("Damaged",style: TextStyle(fontSize: 13),),
                                                       ],
                                                     ),
                                                   )
                                                 ],
-                                              )
+                                              ),
+                                        // )
                                       ],
                                     )),
                               ));
@@ -527,7 +536,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
 
   Widget _helmetReturnButton(String title, Color col, Function onPressed) {
     return Container(
-      width: MediaQuery.of(context).size.width < 400 ? 80 : 100,
+      width: MediaQuery.of(context).size.width < 400 ? 100 : 100,
       height: 40,
       decoration: BoxDecoration(
           color: col, borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -564,6 +573,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                 child: Row(
                   children: <Widget>[
                     CircleAvatar(
+                      backgroundColor: Color(0xfffe9263),
                       radius: 30,
                       child: ClipRRect(
                         borderRadius: new BorderRadius.circular(100.0),

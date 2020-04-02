@@ -18,7 +18,7 @@ class GuestLogin extends StatefulWidget {
 }
 
 class _GuestLoginState extends State<GuestLogin> {
-  File file;
+  File _file;
   bool image;
   Widget _backButton() {
     return InkWell(
@@ -93,7 +93,7 @@ class _GuestLoginState extends State<GuestLogin> {
           onPressed: () {
             print("Guest Login Pressed");
             // SystemChannels.textInput.invokeMethod('TextInput.hide');
-            sendGuestData(context, _guestName, _guestEmail, _guestNumber,_guestAdd,file);
+            sendGuestData(context, _guestName, _guestEmail, _guestNumber,_guestAdd,_file);
             // file.delete();
 
             // Scaffold.of(context).showSnackBar(snackBarRegister);
@@ -236,8 +236,8 @@ class _GuestLoginState extends State<GuestLogin> {
   //   );
   // }
   void _choose() async {
-    file = await ImagePicker.pickImage(source: ImageSource.camera);
-    if (file == null) {
+    _file = await ImagePicker.pickImage(source: ImageSource.camera);
+    if (_file == null) {
       return;
     } else {
       setState(() {
@@ -276,7 +276,7 @@ class _GuestLoginState extends State<GuestLogin> {
                                   borderRadius:
                                       new BorderRadius.circular(100.0),
                                   child: Image.file(
-                                    file,
+                                    _file,
                                     width: 100,
                                     height: 100,
                                     fit: BoxFit.cover,
