@@ -275,7 +275,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                         fetchImage +
                                                             _bankData[index]
                                                                 ["email"] +
-                                                            "&User&" +
+                                                            "&"+_bankData[index]["type"]+"&" +
                                                             headers['token'],
                                                         width: 100,
                                                         height: 100,
@@ -445,7 +445,11 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                                   val);
                                                             },
                                                           ),
-                                                          Text("Okay",style: TextStyle(fontSize: 13),)
+                                                          Text(
+                                                            "Okay",
+                                                            style: TextStyle(
+                                                                fontSize: 13),
+                                                          )
                                                         ]),
                                                   ),
                                                   Expanded(
@@ -468,7 +472,11 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                                 val);
                                                           },
                                                         ),
-                                                        Text("Damaged",style: TextStyle(fontSize: 13),),
+                                                        Text(
+                                                          "Damaged",
+                                                          style: TextStyle(
+                                                              fontSize: 13),
+                                                        ),
                                                       ],
                                                     ),
                                                   )

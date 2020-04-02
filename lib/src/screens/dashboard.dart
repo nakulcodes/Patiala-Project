@@ -3,7 +3,6 @@ import 'package:flutter_login_signup/check.dart';
 import 'package:flutter_login_signup/src/screens/storedata.dart';
 import 'package:http/http.dart' as http;
 
-
 class Dashboard extends StatefulWidget {
   int q;
 
@@ -135,20 +134,18 @@ class _DashboardState extends State<Dashboard> {
                   backgroundColor: Color(0xfffe9263),
                   // backgroundColor: Colors.white,
                   // bottomNavigationBar: bar ? _bottomNavBar() : null,
-                  body: SingleChildScrollView(
-                    child: Column(
-                      children: <Widget>[
-                        _topHome(),
-                        // SizedBox(
-                        //   width: 15,
-                        // ),
-                        _listBuild(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        _avail(context),
-                      ],
-                    ),
+                  body: Column(
+                    children: <Widget>[
+                      _topHome(),
+                      // SizedBox(
+                      //   width: 15,
+                      // ),
+                      _listBuild(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      _avail(context),
+                    ],
                   ),
                 ),
               )
@@ -285,7 +282,9 @@ class _DashboardState extends State<Dashboard> {
                     child: ClipRRect(
                       borderRadius: new BorderRadius.circular(100.0),
                       child: Image.network(
-                        fetchImage + "$email&User&" + headers["token"],
+                        title == "guest"
+                            ? fetchImage + "$email&Guests&" + headers["token"]
+                            : fetchImage + "$email&User&" + headers["token"],
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,
@@ -357,12 +356,12 @@ class _DashboardState extends State<Dashboard> {
   Widget _listBuild() {
     return Container(
       margin:
-          title == "guest" ? EdgeInsets.only(top: 13) : EdgeInsets.only(top: 5),
+          title == "guest" ? EdgeInsets.only(top: 8) : EdgeInsets.only(top: 5),
       decoration: BoxDecoration(
         color: Color(0xfffe9263),
       ),
       height: title == "guest"
-          ? MediaQuery.of(context).size.height / 1.7
+          ? MediaQuery.of(context).size.height / 1.73
           : MediaQuery.of(context).size.height / 2.0,
       child: ListView.builder(
           itemCount: data == null ? 0 : data.length,

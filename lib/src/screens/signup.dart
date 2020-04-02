@@ -32,7 +32,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _validate = false;
   String name, email, mobile, password, address;
   bool image;
-  File file;
+  File _file;
 
   void initState() {
     super.initState();
@@ -291,7 +291,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   _sendToServer(BuildContext _context) async {
-    if (file != null) {
+    if (_file != null) {
       if (_key.currentState.validate()) {
         // No any error in validation
         _key.currentState.save();
@@ -303,7 +303,7 @@ class _SignUpPageState extends State<SignUpPage> {
         print("Selected radio is $selectedRadio");
         print("Register Pressed");
         SystemChannels.textInput.invokeMethod('TextInput.hide');
-        print(file.lengthSync());
+        print(_file.lengthSync());
 
         final quality = 80;
         final tmpDir = (await getTemporaryDirectory()).path;
@@ -311,7 +311,7 @@ class _SignUpPageState extends State<SignUpPage> {
             "$tmpDir/${DateTime.now().millisecondsSinceEpoch}-$quality.webp";
 
         final result = await FlutterImageCompress.compressAndGetFile(
-          file.path,
+          _file.path,
           target,
           format: CompressFormat.webp,
           minHeight: 300,
@@ -381,10 +381,10 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _choose() async {
-    file = await ImagePicker.pickImage(
+    _file = await ImagePicker.pickImage(
         source: ImageSource.camera, imageQuality: 100);
 
-    if (file == null) {
+    if (_file == null) {
       return;
     } else {
       setState(() {
@@ -423,7 +423,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   borderRadius:
                                       new BorderRadius.circular(100.0),
                                   child: Image.file(
-                                    file,
+                                    _file,
                                     width: 100,
                                     height: 100,
                                     fit: BoxFit.cover,

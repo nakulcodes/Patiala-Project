@@ -244,63 +244,84 @@ void registerManager(BuildContext context1, String nameReg, String emailReg,
   }
 }
 
-void sendGuestData(
-    BuildContext guestContext,
-    TextEditingController _guestNameData,
-    TextEditingController _guestEmailData,
-    TextEditingController _guestPhoneData,
-    TextEditingController _guestAddData,
-    File _image) async {
-  String nameGuest = _guestNameData.text;
-  String emailGuest = _guestEmailData.text.replaceAll(' ', '');
-  String phoneGuest = _guestPhoneData.text;
-  String addGuest = _guestAddData.text;
-  print("$nameGuest,$emailGuest,$phoneGuest");
-  String dataGuest =
-      '{"phone": "$phoneGuest","name": "$nameGuest","email":"$emailGuest","address":"$addGuest"}';
-  var responseGuest =
-      await http.post(guestLogin, headers: headers, body: dataGuest);
-  String respGuest = responseGuest.body;
+class Guest extends StatefulWidget {
+  BuildContext guestContext;
+  String nameGuest;
+  String emailGuest;
+  String phoneGuest;
+  String addGuest;
+  File _image;
+  Guest(this.guestContext, this.nameGuest, this.emailGuest, this.phoneGuest,
+      this.addGuest, this._image);
+  @override
+  _GuestState createState() => _GuestState();
+}
 
-  var _respbodyGuest = json.decode(respGuest);
+class _GuestState extends State<Guest> {
+  void sendGuestData() async {
+    print(widget.nameGuest);
+    BuildContext  _guestContext = widget.guestContext;
+    String nameGuest = widget.nameGuest;
+    String emailGuest = widget.emailGuest;
+    String phoneGuest = widget.phoneGuest;
+    String addGuest = widget.addGuest;
+    File _image = widget._image;
 
-  setUser(_respbodyGuest, false);
-  setTitle("guest");
+    print("$nameGuest,$emailGuest,$phoneGuest");
+    String dataGuest =
+        '{"phone": "$phoneGuest","name": "$nameGuest","email":"$emailGuest","address":"$addGuest"}';
+    var responseGuest =
+        await http.post(guestLogin, headers: headers, body: dataGuest);
+    String respGuest = responseGuest.body;
 
-  if (responseGuest.statusCode == 200) {
-    _guestNameData.clear();
-    _guestEmailData.clear();
-    _guestPhoneData.clear();
-    // print(respbodyGuest);
+    var _respbodyGuest = json.decode(respGuest);
 
-    if (_respbodyGuest["status"] == "true") {
-      print("GUesst Dataa");
-      headers["token"] = _respbodyGuest["token"];
-      ftpClient.connect();
-      print(_image.path);
-      try {
-        print("Tryingg");
-        ftpClient.changeDirectory("/Images/Guests/");
-        ftpClient.makeDirectory(emailGuest);
-        ftpClient.changeDirectory(emailGuest);
+    setUser(_respbodyGuest, false);
+    setTitle("guest");
 
-        ftpClient.uploadFile(_image);
-        // Duration(seconds: 4);
-        // print(_image.path.split("/").last);
-        // ftpClient.changeDirectory(emailReg);
-        // ftpClient.rename(_image.path.split("/").last, emailReg);
-      } finally {
-        ftpClient.disconnect();
-        _image.delete();
+    if (responseGuest.statusCode == 200) {
+      if (_respbodyGuest["status"] == "true") {
+        print("GUesst Dataa");
+        headers["token"] = _respbodyGuest["token"];
+        ftpClient.connect();
+        print(_image.path);
+        try {
+          print("Tryingg");
+          ftpClient.changeDirectory("/Images/Guests/");
+          ftpClient.makeDirectory(emailGuest);
+          ftpClient.changeDirectory(emailGuest);
+
+          ftpClient.uploadFile(_image);
+          // Duration(seconds: 4);
+          // print(_image.path.split("/").last);
+          // ftpClient.changeDirectory(emailReg);
+          // ftpClient.rename(_image.path.split("/").last, emailReg);
+        } finally {
+          ftpClient.disconnect();
+          _image.delete();
+        }
+        Navigator.push(
+            _guestContext, MaterialPageRoute(builder: (context) => Dashboard()));
       }
-      Navigator.push(
-          guestContext, MaterialPageRoute(builder: (context) => Dashboard()));
-    }
-    if (_respbodyGuest["status"] == "false") {
-      print("Error");
-      Scaffold.of(guestContext).showSnackBar(snackBarErrorGuest);
-      // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
+      if (_respbodyGuest["status"] == "false") {
+        print("Error");
+        Scaffold.of(_guestContext).showSnackBar(snackBarErrorGuest);
+        // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
 
+      }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    sendGuestData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ColorLoader5(),
+    );
   }
 }
