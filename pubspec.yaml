@@ -25,14 +25,12 @@ dependencies:
   cupertino_icons: ^0.1.2
   google_fonts: ^0.3.5
   email_validator: ^1.0.0
-  flutter_datetime_picker: 1.2.5
   curved_navigation_bar: ^0.3.2
   rxdart: ^0.23.1
   image_picker: ^0.6.4
   socket_io_client: ^0.9.9
   ftpclient: ^0.6.0
   flutter_image_compress: ^0.6.5+1
-  compressimage: ^0.1.1
   url_launcher: ^5.4.2
   # email_validator: '^1.0.0
 
