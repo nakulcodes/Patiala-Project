@@ -20,7 +20,8 @@ class _DashboardState extends State<Dashboard> {
   String totalUser;
   String check;
   String number;
-  String user;
+  String email;
+  // String title;
   bool bar;
   bool check1 = false;
   int r = 0;
@@ -30,74 +31,22 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     bar = isBar();
     super.initState();
-    user = getTitle();
+    // title = getTitle();
 
     print("$q this is q..........");
     print("Cominggggggggggggggggggggggggggggggggggggggggggggg");
     this.getBankdata();
     this.getUserData();
+    // print(token);
     setMobile(number);
-
-    // if (q == 0) {
-    //   print(nameUser);
-    //   setState(() {
-    //     check1 = true;
-    //   });
-    // }
   }
-
-  // Future loginCheck() async {
-  //   // AccountPerson acc = new AccountPerson();
-  //   print("Coming.........");
-  //   String name = widget._nameContro.text;
-  //   String pass = widget._passContro.text;
-  //   String data = '{"email":"$name","password":"$pass"}';
-
-  //   var response = await http.post(userLogin, headers: headers, body: data);
-  //   print(response.body);
-  //   String resp = response.body;
-
-  //   var respbody = json.decode(resp);
-
-  //   print(respbody["status"]);
-
-  //   setUser(respbody, true);
-  //   if (response.statusCode == 200) {
-  //     if (respbody["status"] == "true") {
-  //       widget._nameContro.clear();
-  //       widget._passContro.clear();
-  //       print("..............................");
-
-  //       // print(person.namee);
-
-  //       // Navigator.push(
-  //       //     widget.context,
-  //       //     MaterialPageRoute(
-  //       //         builder: (context) => Dashboard(
-  //       //               q: 1,
-  //       //             )));
-  //     } else if (respbody["status"] == "false") {
-  //       // print(person.namee);
-  //       Navigator.pop(context);
-  //       // Scaffold.of(widget.context).showSnackBar(snackBarLogin);
-
-  //       print("Error is Dashboard moving......");
-  //     }
-  //   }
-  // }
 
   String getUserData() {
     var q = getUser();
-    // data = q["banks"];
+
     nameUser = q["name"];
     number = q["phone"];
-
-    // var _responseData = getBankdataa();
-
-    // availUser = q["available_helmets"];
-    // totalUser = q["total_helmets"];
-    // hel = q["helmets"];
-    // check = data.length.toString();
+    email = q["email"];
 
     return "Working.....";
   }
@@ -110,7 +59,7 @@ class _DashboardState extends State<Dashboard> {
 
     if (_response.statusCode == 200) {
       print("Banks are Working......");
-      // return _responseData;
+
       availUser = _responseData["available_helmets"];
       totalUser = _responseData["total_helmets"];
       data = _responseData["banks"];
@@ -154,6 +103,8 @@ class _DashboardState extends State<Dashboard> {
     print("$data is inside book helmet");
     print("$number");
     var _body1 = '{"bank":"$data","type":"$title","phone":"$number"}';
+    print(headers);
+    print(_body1);
     var _helResp = await http.post(bookHelmet, headers: headers, body: _body1);
     print(_helResp);
     String _helRepStr = _helResp.body;
@@ -308,23 +259,38 @@ class _DashboardState extends State<Dashboard> {
           Container(
             height: MediaQuery.of(context).size.height / 8 - 30,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
                   //!    "Hi! $name",
-                  "Hi! $nameUser",
+                  nameUser.length < 7
+                      ? "Hi! $nameUser"
+                      : "Hi! " + nameUser.substring(0, 7) + "..",
                   style: TextStyle(color: Colors.black, fontSize: 30),
                   textAlign: TextAlign.left,
                 ),
-                SizedBox(
-                  width: 130.0,
-                ),
+                // SizedBox(
+                //   width: 130.0,
+                // ),
                 CircleAvatar(
-                  backgroundColor: Colors.black,
+                  // backgroundColor: Colors.black,
+                  // backgroundImage: ,
+
                   radius: 30.0,
-                  child: GestureDetector(onTap: () {
-                    _dialog(context);
-                  }),
+                  child: GestureDetector(
+                    onTap: () {
+                      _dialog(context);
+                    },
+                    child: ClipRRect(
+                      borderRadius: new BorderRadius.circular(100.0),
+                      child: Image.network(
+                        fetchImage + "$email&User&" + headers["token"],
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

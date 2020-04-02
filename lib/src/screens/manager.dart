@@ -15,6 +15,8 @@ String availHelmets;
 bool dataRecieved = true;
 bool helEntered;
 bool noHistory;
+String _email;
+
 String _name;
 String _managerNumber;
 String bankId;
@@ -46,12 +48,9 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
         // print(_bankData.length);
         if (mounted)
           setState(() {
-            // noHistory = false;
             check = 1;
           });
       } else if (data3["status"] == "false") {
-        // joinRoom();
-        // noHistory = null;
         if (mounted)
           setState(() {
             check = 0;
@@ -152,27 +151,6 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
           });
         }
       }
-      //  print(check);
-      //   print(check.length);
-
-      // _bankData.add(data);
-
-      // print(_bankData);
-      // print(_bankData.length);
-// setState(() {
-//       if (noHistory != null) {
-//         setState(() {
-//           _bankData.add(t["transactions"]);
-//         });
-//       }
-//       // else if (noHistory == null) {
-//       //   print("Coming Here");
-
-//       //     _bankData = [t];
-//       //     noHistory = false;
-//       //   }
-//       });
-      // print(_bankData);
     });
   }
 
@@ -188,7 +166,9 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    var data = getUser();
 
+    _email = data["email"];
     _managerNumber = getManagerMobile();
     bankId = getBank();
     _name = getName();
@@ -285,6 +265,21 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                 children: <Widget>[
                                                   CircleAvatar(
                                                     radius: 30,
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          new BorderRadius
+                                                              .circular(100.0),
+                                                      child: Image.network(
+                                                        fetchImage +
+                                                            _bankData[index]
+                                                                ["email"] +
+                                                            "&User&" +
+                                                            headers['token'],
+                                                        width: 100,
+                                                        height: 100,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
                                                   ),
                                                   _bankData[index]["user"]
                                                               .length <
@@ -357,8 +352,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                               )
                                             : Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
+                                                    MainAxisAlignment.start,
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: <Widget>[
@@ -423,30 +417,39 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                               "Server Error...."),
                                                         ));
                                                       }
-                                                      // socketIO.sendMessage(
-                                                      //     "complete",
-                                                      // json.encode({
-                                                      //   "body": {
-                                                      //     "transaction_id":
-                                                      //         int.parse(_bankData[
-                                                      //                 index][
-                                                      //             "transaction_id"]),
-                                                      //     "manager": "8146992621",
-                                                      //   }
-                                                      // }));
-                                                      //     http.post(completeTransacion,
-                                                      //         headers: headers,
-                                                      //         body:
-                                                      //             // "body":{"transaction_id":  int.parse(_bankData[index]["transaction_id"]),"manager": managerMobile});
-                                                      //  );
                                                     },
                                                   ),
                                                   Container(
-                                                      height: 17,
-                                                      child: Row(
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: <Widget>[
+                                                        Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceAround,
+                                                            children: <Widget>[
+                                                              Radio(
+                                                                value: 0,
+                                                                groupValue:
+                                                                    _selectedRadio,
+                                                                onChanged:
+                                                                    (val) {
+                                                                  print(val);
+                                                                  setSelectedRadio(
+                                                                      val);
+                                                                },
+                                                              ),
+                                                              Text("Okay")
+                                                            ]),
+                                                        Row(
                                                           children: <Widget>[
                                                             Radio(
-                                                              value: 0,
+                                                              value: 1,
                                                               groupValue:
                                                                   _selectedRadio,
                                                               onChanged: (val) {
@@ -455,28 +458,12 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                                     val);
                                                               },
                                                             ),
-                                                            Text("Okay")
-                                                          ])),
-                                                  Container(
-                                                      height: 17,
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceAround,
-                                                        children: <Widget>[
-                                                          Radio(
-                                                            value: 1,
-                                                            groupValue:
-                                                                _selectedRadio,
-                                                            onChanged: (val) {
-                                                              print(val);
-                                                              setSelectedRadio(
-                                                                  val);
-                                                            },
-                                                          ),
-                                                          Text("Damaged"),
-                                                        ],
-                                                      )),
+                                                            Text("Damaged"),
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ),
+                                                  )
                                                 ],
                                               )
                                       ],
@@ -523,7 +510,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
 
   Widget _button(String title, Function onPressed, Color col) {
     return Container(
-      width: 100,
+      width: MediaQuery.of(context).size.width < 400 ? 80 : 100,
       height: 40,
       decoration: BoxDecoration(
           color: col, borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -540,7 +527,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
 
   Widget _helmetReturnButton(String title, Color col, Function onPressed) {
     return Container(
-      width: 120,
+      width: MediaQuery.of(context).size.width < 400 ? 80 : 100,
       height: 40,
       decoration: BoxDecoration(
           color: col, borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -574,23 +561,42 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
               Container(
                 width: MediaQuery.of(context).size.width / 2,
                 // height: MediaQuery.of(context).size.height / 10 * 2,
-                child: _name.length < 6
-                    ? Text(
-                        "Hi! " + _name,
-                        style: TextStyle(
-                            fontSize: 40, fontWeight: FontWeight.bold),
-                      )
-                    : _name.length <= 10
+                child: Row(
+                  children: <Widget>[
+                    CircleAvatar(
+                      radius: 30,
+                      child: ClipRRect(
+                        borderRadius: new BorderRadius.circular(100.0),
+                        child: Image.network(
+                          fetchImage + "$_email&Manager&" + headers['token'],
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    _name.length < 6
                         ? Text(
                             "Hi! " + _name,
                             style: TextStyle(
-                                fontSize: 35, fontWeight: FontWeight.bold),
+                                fontSize: 30, fontWeight: FontWeight.bold),
                           )
-                        : Text(
-                            "Hi! " + _name.substring(0, 10) + "..",
-                            style: TextStyle(
-                                fontSize: 35, fontWeight: FontWeight.bold),
-                          ),
+                        : _name.length <= 10
+                            ? Text(
+                                "Hi! " + _name,
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              )
+                            : Text(
+                                "Hi! " + _name.substring(0, 10) + "..",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                  ],
+                ),
               ),
               Row(
                 children: <Widget>[

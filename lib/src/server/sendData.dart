@@ -30,10 +30,15 @@ class _LoginLoaderUserState extends State<LoginLoaderUser> {
     var respbody = json.decode(resp);
 
     print(respbody["status"]);
-    setUser(respbody, true);
-    setTitle("reg_user");
+
     if (response.statusCode == 200) {
       if (respbody["status"] == "true") {
+        setUser(respbody, true);
+
+        print(respbody["token"]);
+        setTitle("reg_user");
+
+        headers["token"] = respbody["token"];
         widget._nameContro.clear();
         widget._passContro.clear();
 
@@ -91,18 +96,20 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
     var respbody = json.decode(resp);
 
     print(respbody["status"]);
-    setUser(respbody, true);
 
     if (response.statusCode == 200) {
       if (respbody["status"] == "true") {
         widget._nameContro.clear();
         widget._passContro.clear();
+
+        setUser(respbody, true);
         setBank(respbody["bank_id"]);
         setMobileManager(respbody["phone"]);
         setBankLocation(respbody["location"]);
         setAvailHel(respbody["available_helmets"]);
         setTotalHel(respbody["total_helmets"]);
         setName(respbody["name"]);
+        headers["token"] = respbody["token"];
 
         // print(person.namee);
 
@@ -136,21 +143,8 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
   }
 }
 
-void registerUser(
-    BuildContext context1,
-    TextEditingController regNameData,
-    TextEditingController regEmailData,
-    TextEditingController regPhoneData,
-    TextEditingController regPassData,
-    TextEditingController regAddData,
-    File _image) async {
-  // Scaffold.of(context).showSnackBar(snackBarRegister);
-  String nameReg = regNameData.text;
-  String emailReg = regEmailData.text.replaceAll(' ', '');
-  String phoneReg = regPhoneData.text;
-  String passReg = regPassData.text.replaceAll(' ', '');
-  String addReg = regAddData.text;
-  print("$nameReg+$emailReg+$phoneReg+$passReg+$addReg");
+void registerUser(BuildContext context1, String nameReg, String emailReg,
+    String phoneReg, String passReg, String addReg, File _image) async {
   String dataReg =
       '{"phone": "$phoneReg","name": "$nameReg","password":"$passReg","DOB":"null","email":"$emailReg","s3_link":"null","address":"$addReg"}';
 
@@ -161,16 +155,12 @@ void registerUser(
   var respbody = json.decode(resp);
   print(respbody["status"]);
   if (responseReg.statusCode == 200) {
-    regNameData.clear();
-    regEmailData.clear();
-    regPhoneData.clear();
-    regPassData.clear();
-    regAddData.clear();
     if (respbody["status"] == "true") {
       print("Registered.....");
       Scaffold.of(context1).showSnackBar(snackBarRegister);
       ftpClient.connect();
       print(_image.path);
+
       try {
         print("Tryingg");
         ftpClient.changeDirectory("/Images/User/");
@@ -178,10 +168,9 @@ void registerUser(
         ftpClient.changeDirectory(emailReg);
 
         ftpClient.uploadFile(_image);
-        // Duration(seconds: 4);
-        // print(_image.path.split("/").last);
-        // ftpClient.changeDirectory(emailReg);
-        // ftpClient.rename(_image.path.split("/").last, emailReg);
+      }
+      catch(e){
+        print(e);
       } finally {
         ftpClient.disconnect();
         // _image.delete();
@@ -198,20 +187,14 @@ void registerUser(
   }
 }
 
-void registerManager(
-    BuildContext context1,
-    TextEditingController regNameData,
-    TextEditingController regEmailData,
-    TextEditingController regPhoneData,
-    TextEditingController regPassData,
-    TextEditingController regAddData,
-    File _image) async {
+void registerManager(BuildContext context1, String nameReg, String emailReg,
+    String phoneReg, String passReg, String addReg, File _image) async {
   // Scaffold.of(context).showSnackBar(snackBarRegister);
-  String nameReg = regNameData.text;
-  String emailReg = regEmailData.text.replaceAll(' ', '');
-  String phoneReg = regPhoneData.text.replaceAll(' ', '');
-  String passReg = regPassData.text.replaceAll(' ', '');
-  String addReg = regAddData.text;
+  // String nameReg = regNameData.text;
+  // String emailReg = regEmailData.text.replaceAll(' ', '');
+  // String phoneReg = regPhoneData.text.replaceAll(' ', '');
+  // String passReg = regPassData.text.replaceAll(' ', '');
+  // String addReg = regAddData.text;
 
   print("$nameReg+$emailReg+$phoneReg+$passReg");
   String dataReg =
@@ -225,12 +208,12 @@ void registerManager(
   print(respbody["status"]);
   print(respbody);
   if (responseReg.statusCode == 200) {
-    regNameData.clear();
-    regEmailData.clear();
-    regPhoneData.clear();
-    regPassData.clear();
+    // regNameData.clear();
+    // regEmailData.clear();
+    // regPhoneData.clear();
+    // regPassData.clear();
 
-    regAddData.clear();
+    // regAddData.clear();
     if (respbody["status"] == "true") {
       print("Registered.....");
       Scaffold.of(context1).showSnackBar(snackBarRegisterManager);
@@ -294,6 +277,7 @@ void sendGuestData(
 
     if (_respbodyGuest["status"] == "true") {
       print("GUesst Dataa");
+      headers["token"] = _respbodyGuest["token"];
       ftpClient.connect();
       print(_image.path);
       try {

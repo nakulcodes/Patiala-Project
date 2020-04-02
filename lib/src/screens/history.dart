@@ -14,8 +14,10 @@ class _HistoryState extends State<History> {
   // List noData = [
   //   {"data": "No History"}
   // ];
- 
+
   void getHistory() async {
+    
+    print(headers);
     var data = await http.post(userHistory,
         headers: headers, body: '{"phone": "$_mobile"}');
     String dataBody = data.body;
@@ -26,19 +28,19 @@ class _HistoryState extends State<History> {
       if (body1["status"] == "true") {
         print(body1);
         _toShow = body1["transactions"];
-        if(mounted)
-        setState(() {
-          _check = true;
-          _toShow = body1["transactions"];
-        });
+        if (mounted)
+          setState(() {
+            _check = true;
+            _toShow = body1["transactions"];
+          });
       } else {
-        if(mounted)
-        setState(() {
-          print(body1);
-          // _toShow = noData;
-          _check = true;
-          _check1 = false;
-        });
+        if (mounted)
+          setState(() {
+            print(body1);
+            // _toShow = noData;
+            _check = true;
+            _check1 = false;
+          });
       }
     }
   }
@@ -48,6 +50,7 @@ class _HistoryState extends State<History> {
     super.initState();
     _mobile = getMobile();
     getHistory();
+    
   }
 
   @override
@@ -86,7 +89,7 @@ class _HistoryState extends State<History> {
                                 _toShow.length == null ? 0 : _toShow.length,
                             itemBuilder: (BuildContext context, int index) {
                               return SingleChildScrollView(
-                              child: Card(
+                                  child: Card(
                                 child: Container(
                                   padding: const EdgeInsets.all(15.0),
                                   child: Row(

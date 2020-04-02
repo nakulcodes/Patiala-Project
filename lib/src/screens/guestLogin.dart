@@ -7,7 +7,7 @@ final TextEditingController _guestName = TextEditingController();
 final TextEditingController _guestEmail = TextEditingController();
 final TextEditingController _guestNumber = TextEditingController();
 final TextEditingController _guestAdd = TextEditingController();
-Bloc bloc = new Bloc();
+Bloc bloc1 = new Bloc();
 final snackBarErrorGuest = SnackBar(
   content: Text("Error! Try Again Later"),
 );

@@ -82,13 +82,6 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 10,
           ),
-          // TextFormField(
-          //     controller: contr,
-          //     obscureText: isPassword,
-          //     decoration: InputDecoration(
-          //         border: InputBorder.none,
-          //         fillColor: Color(0xfff3f3f4),
-          //         filled: true))
           StreamBuilder<String>(
             stream: bloc.password,
             builder: (context, snapshot) => TextField(
@@ -293,7 +286,7 @@ class _LoginPageState extends State<LoginPage> {
                       // SizedBox(
                       //   height: 5,
                       // ),
-                       Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Container(
@@ -328,7 +321,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ],
                       ),
-                   
+
                       _submitButton(),
                       Container(
                         padding: EdgeInsets.symmetric(vertical: 5.0),
@@ -342,7 +335,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       _divider(),
                       _guestSignUp(),
-                    
+
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: _createAccountLabel(),
