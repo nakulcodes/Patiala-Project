@@ -7,8 +7,8 @@ import 'package:flutter_login_signup/allFiles.dart';
 
 class LoginLoaderUser extends StatefulWidget {
   BuildContext context;
-  TextEditingController _nameContro;
-  TextEditingController _passContro;
+  String _nameContro;
+  String _passContro;
 
   LoginLoaderUser(this.context, this._nameContro, this._passContro);
 
@@ -19,8 +19,8 @@ class LoginLoaderUser extends StatefulWidget {
 class _LoginLoaderUserState extends State<LoginLoaderUser> {
   void loginCheck() async {
     print("Coming.........");
-    String name = widget._nameContro.text.replaceAll(' ', '');
-    String pass = widget._passContro.text.replaceAll(' ', '');
+    String name = widget._nameContro;
+    String pass = widget._passContro;
     String data = '{"email":"$name","password":"$pass"}';
 
     var response = await http.post(userLogin, headers: headers, body: data);
@@ -39,8 +39,7 @@ class _LoginLoaderUserState extends State<LoginLoaderUser> {
         setTitle("reg_user");
 
         headers["token"] = respbody["token"];
-        widget._nameContro.clear();
-        widget._passContro.clear();
+     
 
         // print(person.namee);
 
@@ -74,8 +73,8 @@ class _LoginLoaderUserState extends State<LoginLoaderUser> {
 
 class LoginLoaderManager extends StatefulWidget {
   BuildContext context;
-  TextEditingController _nameContro;
-  TextEditingController _passContro;
+  String _nameContro;
+  String _passContro;
 
   LoginLoaderManager(this.context, this._nameContro, this._passContro);
   @override
@@ -85,9 +84,11 @@ class LoginLoaderManager extends StatefulWidget {
 class _LoginLoaderManagerState extends State<LoginLoaderManager> {
   void managerLoginCheck() async {
     print("Coming......... inside Manager Login Check");
-    String name = widget._nameContro.text;
-    String pass = widget._passContro.text;
+    String name = widget._nameContro;
+    String pass = widget._passContro;
+    
     String data = '{"email":"$name","password":"$pass"}';
+    print(data);
 
     var response = await http.post(managerLogin, headers: headers, body: data);
     print(response.body);
@@ -99,8 +100,8 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
 
     if (response.statusCode == 200) {
       if (respbody["status"] == "true") {
-        widget._nameContro.clear();
-        widget._passContro.clear();
+        
+        
 
         setUser(respbody, true);
         setBank(respbody["bank_id"]);
@@ -157,7 +158,7 @@ void registerUser(BuildContext context1, String nameReg, String emailReg,
   if (responseReg.statusCode == 200) {
     if (respbody["status"] == "true") {
       print("Registered.....");
-      Scaffold.of(context1).showSnackBar(snackBarRegister);
+
       ftpClient.connect();
       print(_image.path);
 
@@ -173,15 +174,65 @@ void registerUser(BuildContext context1, String nameReg, String emailReg,
       } finally {
         ftpClient.disconnect();
       }
-      Navigator.pop(context1);
+
+      _dialog(
+          context1,
+          "You have sucessfully registered",
+          Image.asset("assets/images/tick2.png"),
+          () => Navigator.popAndPushNamed(context1, "loginPage"));
     }
     if (respbody["status"] == "false") {
       print("Error");
-      Scaffold.of(context1).showSnackBar(snackBarErrorReg);
-      // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
 
+      _dialog(context1, "You have already registered",
+          Image.asset("assets/images/red2.png"), () => Navigator.popAndPushNamed(context1, "loginPage"));
     }
+  
   }
+}
+
+Future<Widget> _dialog(
+    BuildContext _context, String title, Widget image, Function ontapp) {
+  return showDialog(
+      context: _context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          title: Center(
+              child: Text(
+            "$title",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          )),
+          content: Container(
+            width: 200,
+            height: 200,
+            child: image,
+          ),
+          actions: [
+            // InkWell(child: Text("Book"), onTap: ontapp),
+            _button("Okay", Color(0xfffe9263), ontapp)
+          ],
+        );
+      });
+}
+
+Widget _button(String title, Color col, Function onPressed) {
+  return Container(
+    width: 100,
+    height: 40,
+    decoration: BoxDecoration(
+        color: col, borderRadius: BorderRadius.all(Radius.circular(5))),
+    child: InkWell(
+      onTap: onPressed,
+      child: Center(
+          child: Text(
+        title,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+      )),
+    ),
+  );
 }
 
 void registerManager(BuildContext context1, String nameReg, String emailReg,
@@ -213,8 +264,8 @@ void registerManager(BuildContext context1, String nameReg, String emailReg,
     // regAddData.clear();
     if (respbody["status"] == "true") {
       print("Registered.....");
-      Scaffold.of(context1).showSnackBar(snackBarRegisterManager);
-      Duration(seconds: 2);
+      // Scaffold.of(context1).showSnackBar(snackBarRegisterManager);
+      // Duration(seconds: 2);
       ftpClient.connect();
 
       try {
@@ -230,17 +281,20 @@ void registerManager(BuildContext context1, String nameReg, String emailReg,
         // ftpClient.rename(_image.path.split("/").last, emailReg);
       } finally {
         ftpClient.disconnect();
-        Navigator.pop(context1);
       }
+      _dialog(
+          context1,
+          "You will recieve mail shortly",
+          Image.asset("assets/images/tick2.png"),
+          () => Navigator.popAndPushNamed(context1, "loginPage"));
     }
-    if (respbody["status"] == "false") {
-      print("Error");
-      Scaffold.of(context1).showSnackBar(SnackBar(
-        content: Text("Error in Registering as Manager...."),
-      ));
-      // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
+  }
+  if (respbody["status"] == "false") {
+    print("Error");
+    _dialog(context1, "You have already registered",
+        Image.asset("assets/images/red2.png"), () =>  Navigator.popAndPushNamed(context1, "loginPage"));
+    // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
 
-    }
   }
 }
 
@@ -260,7 +314,7 @@ class Guest extends StatefulWidget {
 class _GuestState extends State<Guest> {
   void sendGuestData() async {
     print(widget.nameGuest);
-    BuildContext  _guestContext = widget.guestContext;
+    BuildContext _guestContext = widget.guestContext;
     String nameGuest = widget.nameGuest;
     String emailGuest = widget.emailGuest;
     String phoneGuest = widget.phoneGuest;
@@ -300,8 +354,8 @@ class _GuestState extends State<Guest> {
           ftpClient.disconnect();
           _image.delete();
         }
-        Navigator.push(
-            _guestContext, MaterialPageRoute(builder: (context) => Dashboard()));
+        Navigator.push(_guestContext,
+            MaterialPageRoute(builder: (context) => Dashboard()));
       }
       if (_respbodyGuest["status"] == "false") {
         print("Error");

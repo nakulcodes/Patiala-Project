@@ -8,12 +8,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return MaterialApp(
-      routes: {
-        // When navigating to the "/" route, build the FirstScreen widget.
-        // '0': (context) => Dashboard(),
-        // When navigating to the "/second" route, build the SecondScreen widget.
-        '1': (context) => History(),
-      },
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -22,9 +16,54 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
-      // home:ChatPage(),
-      // home: ManagerDashboard(),
+      routes: {
+    // When navigating to the "/" route, build the FirstScreen widget.
+    'loginPage': (context) => LoginPage(),
+    // When navigating to the "/second" route, build the SecondScreen widget.
+    
+  },
+      home: FirstScreen(),
+    );
+  }
+}
+
+class FirstScreen extends StatefulWidget {
+  @override
+  _FirstScreenState createState() => _FirstScreenState();
+}
+
+class _FirstScreenState extends State<FirstScreen> {
+  moveNext() async {
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginPage(),
+          ));
+// Here you can write your code
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    moveNext();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Container(
+            width: 200,
+            height: 200,
+            child:
+                Hero(tag: 'logo', child: Image.asset("assets/images/road.png")),
+          ),
+        ),
+      ),
     );
   }
 }

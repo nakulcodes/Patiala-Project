@@ -507,9 +507,10 @@ class _GuestLoginState extends State<GuestLogin> {
   }
 
   _sendToServer(BuildContext _context) async {
-    if (_file != null) {
+  
       if (_key.currentState.validate()) {
         // No any error in validation
+        if(_file!=null){
         _key.currentState.save();
         print("Name $name");
         print("Mobile $mobile");
@@ -542,14 +543,17 @@ class _GuestLoginState extends State<GuestLogin> {
             MaterialPageRoute(
                 builder: (context) =>
                     Guest(context, name, email, mobile, address, result)));
+
+        }
       } else {
         // validation error
         setState(() {
           _validate = true;
         });
       }
-    }
+    
   }
+  
 
   Widget _emailPasswordWidget() {
     return Column(
@@ -613,6 +617,11 @@ class _GuestLoginState extends State<GuestLogin> {
                                   ),
                                 ),
                         ),
+                        
+                      ),
+                        Text(
+                        _validate == true ? "Click Image" : " ",
+                        style: TextStyle(color: Colors.red, fontSize: 15),
                       ),
                       SizedBox(
                         height: 10,

@@ -1,4 +1,3 @@
-
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_login_signup/allFiles.dart';
 import 'dart:io';
@@ -33,6 +32,7 @@ class _SignUpPageState extends State<SignUpPage> {
   String name, email, mobile, password, address;
   bool image;
   File _file;
+  bool noImage;
 
   void initState() {
     super.initState();
@@ -277,8 +277,7 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             color: Color(0xfffe9263),
             onPressed: () {
-              // SystemChannels.textInput
-              //       .invokeMethod('TextInput.hide');
+              SystemChannels.textInput.invokeMethod('TextInput.hide');
               _sendToServer(context);
             },
             child: Text('Register',
@@ -291,48 +290,47 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   _sendToServer(BuildContext _context) async {
-    if (_file != null) {
-      if (_key.currentState.validate()) {
-        // No any error in validation
-        _key.currentState.save();
-        print("Name $name");
-        print("Mobile $mobile");
-        print("Email $email");
-        print("Password is $password");
-        print("Address is $address");
-        print("Selected radio is $selectedRadio");
-        print("Register Pressed");
-        SystemChannels.textInput.invokeMethod('TextInput.hide');
-        print(_file.lengthSync());
+    if (_key.currentState.validate()) {
+      // No any error in validation
+      if(_file!=null){
+      _key.currentState.save();
+      print("Name $name");
+      print("Mobile $mobile");
+      print("Email $email");
+      print("Password is $password");
+      print("Address is $address");
+      print("Selected radio is $selectedRadio");
+      print("Register Pressed");
+      SystemChannels.textInput.invokeMethod('TextInput.hide');
+      // print(_file.lengthSync());
 
-        final quality = 80;
-        final tmpDir = (await getTemporaryDirectory()).path;
-        final target =
-            "$tmpDir/${DateTime.now().millisecondsSinceEpoch}-$quality.webp";
+      final quality = 80;
+      final tmpDir = (await getTemporaryDirectory()).path;
+      final target =
+          "$tmpDir/${DateTime.now().millisecondsSinceEpoch}-$quality.webp";
 
-        final result = await FlutterImageCompress.compressAndGetFile(
-          _file.path,
-          target,
-          format: CompressFormat.webp,
-          minHeight: 300,
-          minWidth: 300,
-          quality: quality,
-        );
-        print(result.lengthSync());
+      final result = await FlutterImageCompress.compressAndGetFile(
+        _file.path,
+        target,
+        format: CompressFormat.webp,
+        minHeight: 300,
+        minWidth: 300,
+        quality: quality,
+      );
+      print(result.lengthSync());
 
-        if (selectedRadio == 0) {
-          registerUser(
-              _context, name, email, mobile, password, address, result);
-        } else if (selectedRadio == 1) {
-          registerManager(
-              _context, name, email, mobile, password, address, result);
-        }
-      } else {
-        // validation error
-        setState(() {
-          _validate = true;
-        });
+      if (selectedRadio == 0) {
+        registerUser(_context, name, email, mobile, password, address, result);
+      } else if (selectedRadio == 1) {
+        registerManager(
+            _context, name, email, mobile, password, address, result);
       }
+      }
+    } else {
+      // validation error
+      setState(() {
+        _validate = true;
+      });
     }
   }
 
@@ -416,7 +414,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: image == null
                               ? Icon(
                                   Icons.camera_alt,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                   size: 50,
                                 )
                               : ClipRRect(
@@ -431,14 +429,22 @@ class _SignUpPageState extends State<SignUpPage> {
                                 ),
                         ),
                       ),
+                      Text(
+                        _validate == true ? "Click Image" : " ",
+                        style: TextStyle(color: Colors.red, fontSize: 15),
+                      ),
                       SizedBox(
-                        height: 10,
+                        height: 8,
                       ),
                       Form(
                           key: _key,
                           autovalidate: _validate,
                           child: _emailPasswordWidget()),
+                      
+                      
                       _submitButton(context),
+
+
                     ]),
               ),
             ]),
