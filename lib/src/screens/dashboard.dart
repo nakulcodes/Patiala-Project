@@ -70,7 +70,8 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  showAlertDialog(BuildContext context, String title) {
+  showAlertDialog(BuildContext context, String title, String title2,
+      {double height}) {
     // String title;
     // set up the button
     Widget okButton = FlatButton(
@@ -82,9 +83,35 @@ class _DashboardState extends State<Dashboard> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10))),
       backgroundColor: Colors.white,
-      title: Text("Booking Status"),
-      content: Text(title),
+      title: Text(
+        "Booking Status",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+      ),
+      content: Container(
+        height: height == null ? 83.0 : height,
+        width: 83,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              title,
+              style: TextStyle(color: Colors.black),
+              textAlign: TextAlign.start,
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Text(
+              title2,
+              style: TextStyle(color: Colors.red),
+            ),
+          ],
+        ),
+      ),
       actions: [
         okButton,
       ],
@@ -115,10 +142,19 @@ class _DashboardState extends State<Dashboard> {
       if (_helMap["status"] == "true") {
         print("It's Here");
         // _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Helmet Booked")));
-        showAlertDialog(context, "Your Helmet is Booked.");
+        showAlertDialog(context, "Your Helmet is Booked.",
+            "You have 5 minutes to pick your helmets else request will be cancelled");
       } else if (_helMap["status"] == "false") {
         print("It's Here Booked Helmet");
-        showAlertDialog(context, "You already have a helmet is possesion.");
+        if (_helMap["desc"] == "requests exceeded") {
+          var _num = _helMap["count"];
+          showAlertDialog(
+              context, 'You already have $_num pending requests.', "",
+              height: 62.0);
+        } else {
+          showAlertDialog(
+              context, "You already have a helmet is possesion.", "");
+        }
       }
     }
   }
@@ -233,7 +269,7 @@ class _DashboardState extends State<Dashboard> {
               child: Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           )),
         ),
       ),
@@ -261,9 +297,9 @@ class _DashboardState extends State<Dashboard> {
               children: <Widget>[
                 Text(
                   //!    "Hi! $name",
-                  nameUser.length < 7
+                  nameUser.length < 13
                       ? "Hi! $nameUser"
-                      : "Hi! " + nameUser.substring(0, 7) + "..",
+                      : "Hi! " + nameUser.substring(0, 13) + "..",
                   style: TextStyle(color: Colors.black, fontSize: 30),
                   textAlign: TextAlign.left,
                 ),
@@ -316,7 +352,8 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       Center(
                         child: Text(
-                          "   Total\nHelmets",
+                          "Total\nHelmets",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 10, fontWeight: FontWeight.bold),
                         ),
@@ -335,7 +372,8 @@ class _DashboardState extends State<Dashboard> {
                             TextStyle(color: Color(0xfffe9263), fontSize: 30),
                       ),
                       Text(
-                        "Alloted\nHelmet",
+                        "Helmet\nAvailable",
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 10, fontWeight: FontWeight.bold),
                       )

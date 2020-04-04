@@ -16,13 +16,14 @@ bool dataRecieved = true;
 bool helEntered;
 bool noHistory;
 String _email;
-
+// bool _accept;
+// bool _decline;
+String radioItem = '';
 String _name;
 String _managerNumber;
 String bankId;
 String _locationName;
 int check;
-int _selectedRadio = 0;
 
 var refreshKey = GlobalKey<RefreshIndicatorState>();
 
@@ -81,6 +82,10 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
     var data3 = json.decode(data2);
     print(_bankData.length);
     if (data1.statusCode == 200) {
+      // setState(() {
+      //   _accept = null;
+      //   _decline = null;
+      // });
       if (data3["status"] == "true") {
         if (status == 1) {
           int _no = int.parse(availHelmets);
@@ -106,6 +111,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
           if (mounted)
             setState(() {
               _bankData.removeAt(index);
+
               if (_bankData == null) {
                 noHistory = null;
               }
@@ -275,7 +281,10 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                         fetchImage +
                                                             _bankData[index]
                                                                 ["email"] +
-                                                            "&"+_bankData[index]["type"]+"&" +
+                                                            "&" +
+                                                            _bankData[index]
+                                                                ["type"] +
+                                                            "&" +
                                                             headers['token'],
                                                         width: 100,
                                                         height: 100,
@@ -340,148 +349,55 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                                 children: <Widget>[
                                                   _button("Accept", () {
                                                     print("Accept Pressed");
-                                                    _dialog(context, index);
+                                                    _dialog(
+                                                      context,
+                                                      index,
+                                                      "Enter Helmet Number",
+                                                      TextField(
+                                                        controller:
+                                                            _helmetNumber,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
+                                                        maxLength: 3,
+                                                      ),
+                                                      InkWell(
+                                                          child:
+                                                              _helmetReturnButton(
+                                                                  "Book",
+                                                                  Colors.green[
+                                                                      600], () {
+                                                        print(_helmetNumber.text
+                                                            .toString());
+
+                                                        _sendBookingData(
+                                                            index,
+                                                            1,
+                                                            _helmetNumber.text,
+                                                            context);
+                                                        // Navigator.pop(context);
+                                                      })),
+                                                    );
                                                     // setState(() {
                                                     //   helmetPicked = true;
                                                     // });
                                                   }, Colors.green[600]),
+
+                                                  // decline != null
+                                                  //     ?
                                                   _button("Decline", () {
                                                     print("Decline Pressed");
                                                     _sendBookingData(index, 0,
                                                         "null", context);
                                                   }, Colors.red),
+                                                  // : indicator(),
                                                 ],
                                               )
-                                            : Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Expanded(
-                                                    child: _helmetReturnButton(
-                                                      "Helmet\nRecieved",
-                                                      Colors.yellow,
-                                                      () async {
-                                                        print(
-                                                            "Helmet Recived Pressed");
-                                                        var completeData =
-                                                            await http.post(
-                                                                completeTransacion,
-                                                                headers:
-                                                                    headers,
-                                                                body: json
-                                                                    .encode({
-                                                                  "transaction_id":
-                                                                      int.parse(
-                                                                          _bankData[index]
-                                                                              [
-                                                                              "transaction_id"]),
-                                                                  "manager":
-                                                                      _managerNumber,
-                                                                  "foundfaulty":
-                                                                      _selectedRadio
-                                                                }));
-
-                                                        var completeJson = json
-                                                            .decode(completeData
-                                                                .body);
-                                                        if (completeJson[
-                                                                    "status"] ==
-                                                                "true" &&
-                                                            completeData
-                                                                    .statusCode ==
-                                                                200) {
-                                                          Scaffold.of(context)
-                                                              .showSnackBar(
-                                                                  SnackBar(
-                                                            content: Text(
-                                                                "Transaction Completed"),
-                                                          ));
-                                                          int _no = int.parse(
-                                                              availHelmets);
-                                                          setAvailHel((_no + 1)
-                                                              .toString());
-                                                          setState(() {
-                                                            availHelmets =
-                                                                getAvailHel();
-                                                            if (_bankData
-                                                                    .length ==
-                                                                1) {
-                                                              check = 0;
-                                                            }
-                                                            _bankData.removeAt(
-                                                                index);
-                                                          });
-                                                        } else {
-                                                          Scaffold.of(context)
-                                                              .showSnackBar(
-                                                                  SnackBar(
-                                                            content: Text(
-                                                                "Server Error...."),
-                                                          ));
-                                                        }
-                                                      },
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    height: 20,
-                                                    child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: <Widget>[
-                                                          Radio(
-                                                            materialTapTargetSize:
-                                                                MaterialTapTargetSize
-                                                                    .shrinkWrap,
-                                                            value: 0,
-                                                            groupValue:
-                                                                _selectedRadio,
-                                                            onChanged: (val) {
-                                                              print(val);
-                                                              setSelectedRadio(
-                                                                  val);
-                                                            },
-                                                          ),
-                                                          Text(
-                                                            "Okay",
-                                                            style: TextStyle(
-                                                                fontSize: 13),
-                                                          )
-                                                        ]),
-                                                  ),
-                                                  Expanded(
-                                                    // height: 20,
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: <Widget>[
-                                                        Radio(
-                                                          materialTapTargetSize:
-                                                              MaterialTapTargetSize
-                                                                  .shrinkWrap,
-                                                          value: 1,
-                                                          groupValue:
-                                                              _selectedRadio,
-                                                          onChanged: (val) {
-                                                            print(val);
-                                                            setSelectedRadio(
-                                                                val);
-                                                          },
-                                                        ),
-                                                        Text(
-                                                          "Damaged",
-                                                          style: TextStyle(
-                                                              fontSize: 13),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
+                                            : _button(
+                                                "Helmet\nReceived",
+                                                () => _dialogReturn(
+                                                    context, index),
+                                                Colors.yellow),
                                         // )
                                       ],
                                     )),
@@ -497,31 +413,121 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                                 topLeft: Radius.circular(10))),
                       ),
                     ),
-
-              // )
-              // : Container(
-              //     width: double.infinity,
-              //     height: MediaQuery.of(context).size.height - 144,
-              //     decoration: BoxDecoration(
-              //         color: Color(0xfffe9263),
-              //         borderRadius: BorderRadius.only(
-              //             topRight: Radius.circular(10),
-              //             topLeft: Radius.circular(10))),
-              //     child: Center(
-              //         child: Text(
-              //       "No Pending \nRequests",
-              //       style: TextStyle(
-              //         color: Colors.white,
-              //         fontSize: 30,
-              //         fontWeight: FontWeight.bold,
-              //       ),
-              //       textAlign: TextAlign.center,
-              //     )),
-              // ),
             ],
           ),
         ),
       )),
+    );
+  }
+
+  Future<Widget> _dialogReturn(BuildContext _context, int _index) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          int _selectedRadio = 0;
+          // bool o;
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            title: Center(
+                child: Text("Confirm Transaction",
+                    style: TextStyle(fontWeight: FontWeight.bold))),
+            content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Radio(
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      value: 0,
+                      groupValue: _selectedRadio,
+                      onChanged: (val) {
+                        print(val);
+                        setState(() {
+                          _selectedRadio = val;
+                        });
+                      },
+                    ),
+                    Text(
+                      "Okay",
+                      style: TextStyle(fontSize: 13),
+                    ),
+                    Radio(
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      value: 1,
+                      groupValue: _selectedRadio,
+                      onChanged: (val) {
+                        print(val);
+                        setState(() {
+                          _selectedRadio = val;
+                        });
+                      },
+                    ),
+                    Text(
+                      "Damaged",
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ],
+                );
+              },
+            ),
+            actions: [
+              InkWell(
+                  child: _helmetReturnButton("Confirm", Colors.yellow, () {
+                print(_selectedRadio);
+
+                completeTransaction(_index, _selectedRadio,_context);
+                
+
+                Navigator.pop(_context);
+                
+              })),
+            ],
+          );
+        });
+  }
+
+  void completeTransaction(int index, int condition,BuildContext _manager) async {
+    print("Helmet Recived Pressed");
+    print(condition);
+    print(_bankData[index]["transaction_id"]);
+      
+    
+    var completeData = await http.post(completeTransacion,
+        headers: headers,
+        body: json.encode({
+          "transaction_id": int.parse(_bankData[index]["transaction_id"]),
+          "manager": _managerNumber,
+          "foundfaulty": condition
+        }));
+
+    var completeJson = json.decode(completeData.body);
+    if (completeJson["status"] == "true" && completeData.statusCode == 200) {
+      Scaffold.of(_manager).showSnackBar(SnackBar(
+        content: Text("Transaction Completed"),
+      ));
+      int _no = int.parse(availHelmets);
+      setAvailHel((_no + 1).toString());
+      setState(() {
+        availHelmets = getAvailHel();
+        if (_bankData.length == 1) {
+          check = 0;
+        }
+        _bankData.removeAt(index);
+      });
+    } else {
+      print("I am in else");
+    Scaffold.of(_manager).showSnackBar(SnackBar(
+        content: Text("Server Error...."),
+      ));
+    
+    }
+  }
+
+  Widget indicator() {
+    return CircularProgressIndicator(
+      value: null,
+      strokeWidth: 5.0,
     );
   }
 
@@ -536,6 +542,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
         child: Center(
             child: Text(
           title,
+          textAlign: TextAlign.center,
           style: TextStyle(fontWeight: FontWeight.bold),
         )),
       ),
@@ -741,19 +748,21 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
     );
   }
 
-  Future<Widget> _dialog(BuildContext _context, int index) {
+  Future<Widget> _dialog(BuildContext _context, int index, String _title,
+      Widget field, Widget action) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10))),
-            title: Center(child: Text("Enter Helmet Number")),
-            content: TextField(
-              controller: _helmetNumber,
-              keyboardType: TextInputType.number,
-              maxLength: 3,
-            ),
+            title: Center(child: Text(_title)),
+            content: field,
+            // TextField(
+            //   controller: _helmetNumber,
+            //   keyboardType: TextInputType.number,
+            //   maxLength: 3,
+            // ),
             actions: [
               InkWell(
                   child: _helmetReturnButton("Book", Colors.green[600], () {
@@ -762,14 +771,9 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                 _sendBookingData(index, 1, _helmetNumber.text, _context);
                 Navigator.pop(_context);
               })),
+              // action
             ],
           );
         });
-  }
-
-  void setSelectedRadio(int val) {
-    setState(() {
-      _selectedRadio = val;
-    });
   }
 }

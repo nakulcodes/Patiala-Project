@@ -63,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
     if (value.length == 0) {
       return "Password is Required";
     } else if (!regExp.hasMatch(value)) {
-      return "Password must have 1 Uppercase,1 Lowercase,1 numeric character \n& 1 special character";
+      return "Password is Required";
     }
     return null;
   }

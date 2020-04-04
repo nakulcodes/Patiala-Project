@@ -1,6 +1,7 @@
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_login_signup/allFiles.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -32,7 +33,8 @@ class _SignUpPageState extends State<SignUpPage> {
   String name, email, mobile, password, address;
   bool image;
   File _file;
-  bool noImage;
+  bool register;
+  bool _image ;
 
   void initState() {
     super.initState();
@@ -278,6 +280,7 @@ class _SignUpPageState extends State<SignUpPage> {
             color: Color(0xfffe9263),
             onPressed: () {
               SystemChannels.textInput.invokeMethod('TextInput.hide');
+             
               _sendToServer(context);
             },
             child: Text('Register',
@@ -292,45 +295,203 @@ class _SignUpPageState extends State<SignUpPage> {
   _sendToServer(BuildContext _context) async {
     if (_key.currentState.validate()) {
       // No any error in validation
-      if(_file!=null){
-      _key.currentState.save();
-      print("Name $name");
-      print("Mobile $mobile");
-      print("Email $email");
-      print("Password is $password");
-      print("Address is $address");
-      print("Selected radio is $selectedRadio");
-      print("Register Pressed");
-      SystemChannels.textInput.invokeMethod('TextInput.hide');
-      // print(_file.lengthSync());
+      print("here");
+      if (_file != null) {
+         setState(() {
+                register = true;
+                _image = null;
+              });
+        _key.currentState.save();
+        print("Name $name");
+        print("Mobile $mobile");
+        print("Email $email");
+        print("Password is $password");
+        print("Address is $address");
+        print("Selected radio is $selectedRadio");
+        print("Register Pressed");
+        SystemChannels.textInput.invokeMethod('TextInput.hide');
+        // print(_file.lengthSync());
 
-      final quality = 80;
-      final tmpDir = (await getTemporaryDirectory()).path;
-      final target =
-          "$tmpDir/${DateTime.now().millisecondsSinceEpoch}-$quality.webp";
+        final quality = 80;
+        final tmpDir = (await getTemporaryDirectory()).path;
+        final target =
+            "$tmpDir/${DateTime.now().millisecondsSinceEpoch}-$quality.webp";
 
-      final result = await FlutterImageCompress.compressAndGetFile(
-        _file.path,
-        target,
-        format: CompressFormat.webp,
-        minHeight: 300,
-        minWidth: 300,
-        quality: quality,
-      );
-      print(result.lengthSync());
+        final result = await FlutterImageCompress.compressAndGetFile(
+          _file.path,
+          target,
+          format: CompressFormat.webp,
+          minHeight: 300,
+          minWidth: 300,
+          quality: quality,
+        );
+        print(result.lengthSync());
 
-      if (selectedRadio == 0) {
-        registerUser(_context, name, email, mobile, password, address, result);
-      } else if (selectedRadio == 1) {
-        registerManager(
-            _context, name, email, mobile, password, address, result);
+        if (selectedRadio == 0) {
+          registerUser(_context, name, email, mobile, password, address, result,
+              register);
+        } else if (selectedRadio == 1) {
+          registerManager(_context, name, email, mobile, password, address,
+              result, register);
+        }
       }
+      else{
+        setState(() {
+          _image = true;
+        });
       }
     } else {
+      if(_file==null){
+        setState(() {
+          _image = true;
+        });
+      }
       // validation error
       setState(() {
         _validate = true;
       });
+    }
+  }
+
+  void registerUser(
+      BuildContext context1,
+      String nameReg,
+      String emailReg,
+      String phoneReg,
+      String passReg,
+      String addReg,
+      File _image,
+      bool _register) async {
+    String dataReg =
+        '{"phone": "$phoneReg","name": "$nameReg","password":"$passReg","DOB":"null","email":"$emailReg","s3_link":"null","address":"$addReg"}';
+
+    var responseReg =
+        await http.post(userRegister, headers: headers, body: dataReg);
+    String resp = responseReg.body;
+
+    var respbody = json.decode(resp);
+    print(respbody["status"]);
+    if (responseReg.statusCode == 200) {
+      if (respbody["status"] == "true") {
+        print("Registered.....");
+
+        ftpClient.connect();
+        print(_image.path);
+
+        try {
+          print("Tryingg");
+          ftpClient.changeDirectory("/Images/User/");
+          ftpClient.makeDirectory(emailReg);
+          ftpClient.changeDirectory(emailReg);
+
+          ftpClient.uploadFile(_image);
+        } catch (e) {
+          print(e);
+        } finally {
+          ftpClient.disconnect();
+        }
+        setState(() {
+          register = null;
+        });
+
+        dialog(
+            context1,
+            "You have sucessfully registered",
+            Image.asset("assets/images/tick2.png"),
+            () => Navigator.popAndPushNamed(context1, "loginPage"));
+      }
+      if (respbody["status"] == "false") {
+        print("Error");
+        setState(() {
+          register = null;
+        });
+        dialog(
+            context1,
+            "You have already registered",
+            Image.asset("assets/images/red2.png"),
+            () => Navigator.popAndPushNamed(context1, "loginPage"));
+      }
+    }
+  }
+
+  void registerManager(
+      BuildContext context1,
+      String nameReg,
+      String emailReg,
+      String phoneReg,
+      String passReg,
+      String addReg,
+      File _image,
+      bool _register) async {
+    // Scaffold.of(context).showSnackBar(snackBarRegister);
+    // String nameReg = regNameData.text;
+    // String emailReg = regEmailData.text.replaceAll(' ', '');
+    // String phoneReg = regPhoneData.text.replaceAll(' ', '');
+    // String passReg = regPassData.text.replaceAll(' ', '');
+    // String addReg = regAddData.text;
+
+    print("$nameReg+$emailReg+$phoneReg+$passReg");
+    String dataReg =
+        '{"phone": "$phoneReg","name": "$nameReg","password":"$passReg","DOB":"null","email":"$emailReg","s3_link":"null","address":"$addReg"}';
+
+    var responseReg =
+        await http.post(managerRegister, headers: headers, body: dataReg);
+    String resp = responseReg.body;
+
+    var respbody = json.decode(resp);
+    print(respbody["status"]);
+    print(respbody);
+
+    if (responseReg.statusCode == 200) {
+      // regNameData.clear();
+      // regEmailData.clear();
+      // regPhoneData.clear();
+      // regPassData.clear();
+
+      // regAddData.clear();
+      if (respbody["status"] == "true") {
+        print("Registered.....");
+        // Scaffold.of(context1).showSnackBar(snackBarRegisterManager);
+        // Duration(seconds: 2);
+        ftpClient.connect();
+
+        try {
+          print("Tryingg");
+          ftpClient.changeDirectory("/Images/Manager/");
+          ftpClient.makeDirectory(emailReg);
+          ftpClient.changeDirectory(emailReg);
+
+          ftpClient.uploadFile(_image);
+          // Duration(seconds: 4);
+          // print(_image.path.split("/").last);
+          // ftpClient.changeDirectory(emailReg);
+          // ftpClient.rename(_image.path.split("/").last, emailReg);
+        } finally {
+          ftpClient.disconnect();
+        }
+        setState(() {
+          register = null;
+        });
+
+        dialog(
+            context1,
+            "You will recieve mail shortly",
+            Image.asset("assets/images/tick2.png"),
+            () => Navigator.popAndPushNamed(context, "loginPage"));
+      }
+    }
+    if (respbody["status"] == "false") {
+      print("Error");
+      setState(() {
+        register = null;
+      });
+      dialog(
+          context1,
+          "You have already registered",
+          Image.asset("assets/images/red2.png"),
+          () => Navigator.popAndPushNamed(context, "loginPage"));
+      // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
+
     }
   }
 
@@ -342,37 +503,44 @@ class _SignUpPageState extends State<SignUpPage> {
         _numberField("Mobile Number"),
         _addressField("Address"),
         _passField("Password"),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Radio(
-                  value: 0,
-                  groupValue: selectedRadio,
-                  onChanged: (val) {
-                    print(val);
-                    setSelectedRadio(val);
-                  },
+        register == null
+            ? Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Radio(
+                          value: 0,
+                          groupValue: selectedRadio,
+                          onChanged: (val) {
+                            print(val);
+                            setSelectedRadio(val);
+                          },
+                        ),
+                        Text("User"),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Radio(
+                          value: 1,
+                          groupValue: selectedRadio,
+                          onChanged: (val) {
+                            print(val);
+                            setSelectedRadio(val);
+                          },
+                        ),
+                        Text("Manager"),
+                      ],
+                    ),
+                  ],
                 ),
-                Text("User"),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Radio(
-                  value: 1,
-                  groupValue: selectedRadio,
-                  onChanged: (val) {
-                    print(val);
-                    setSelectedRadio(val);
-                  },
-                ),
-                Text("Manager"),
-              ],
-            ),
-          ],
-        ),
+              )
+            : CircularProgressIndicator(
+                value: null,
+                strokeWidth: 5.0,
+              ),
       ],
       // ),
     );
@@ -429,9 +597,15 @@ class _SignUpPageState extends State<SignUpPage> {
                                 ),
                         ),
                       ),
+                      SizedBox(
+                        height: 5,
+                      ),
                       Text(
-                        _validate == true ? "Click Image" : " ",
-                        style: TextStyle(color: Colors.red, fontSize: 15),
+                       _image == null ? "Click Image" : "Upload your Photo",
+                        style: TextStyle(
+                            color:
+                                _image == true ? Colors.red : Colors.black,
+                            fontSize: 15),
                       ),
                       SizedBox(
                         height: 8,
@@ -440,11 +614,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           key: _key,
                           autovalidate: _validate,
                           child: _emailPasswordWidget()),
-                      
-                      
                       _submitButton(context),
-
-
                     ]),
               ),
             ]),

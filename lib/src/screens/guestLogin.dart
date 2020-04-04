@@ -300,6 +300,8 @@ class _GuestLoginState extends State<GuestLogin> {
   String name, email, mobile, password, address;
   GlobalKey<FormState> _key = new GlobalKey();
   bool _validate = false;
+  bool guest;
+  bool _image;
 
   Widget _backButton() {
     return InkWell(
@@ -493,8 +495,8 @@ class _GuestLoginState extends State<GuestLogin> {
             ),
             color: Color(0xfffe9263),
             onPressed: () {
-              // SystemChannels.textInput
-              //       .invokeMethod('TextInput.hide');
+              SystemChannels.textInput
+                    .invokeMethod('TextInput.hide');
               _sendToServer(context);
             },
             child: Text('Guest Login',
@@ -507,10 +509,14 @@ class _GuestLoginState extends State<GuestLogin> {
   }
 
   _sendToServer(BuildContext _context) async {
-  
-      if (_key.currentState.validate()) {
-        // No any error in validation
-        if(_file!=null){
+    if (_key.currentState.validate()) {
+      // No any error in validation
+
+      if (_file != null) {
+        setState(() {
+          guest = true;
+          _image = null;
+        });
         _key.currentState.save();
         print("Name $name");
         print("Mobile $mobile");
@@ -543,17 +549,23 @@ class _GuestLoginState extends State<GuestLogin> {
             MaterialPageRoute(
                 builder: (context) =>
                     Guest(context, name, email, mobile, address, result)));
-
-        }
       } else {
-        // validation error
         setState(() {
-          _validate = true;
+          _image = true;
         });
       }
-    
+    } else {
+      if (_file == null) {
+        setState(() {
+          _image = true;
+        });
+      }
+      // validation error
+      setState(() {
+        _validate = true;
+      });
+    }
   }
-  
 
   Widget _emailPasswordWidget() {
     return Column(
@@ -603,7 +615,7 @@ class _GuestLoginState extends State<GuestLogin> {
                           child: image == null
                               ? Icon(
                                   Icons.camera_alt,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                   size: 50,
                                 )
                               : ClipRRect(
@@ -617,11 +629,12 @@ class _GuestLoginState extends State<GuestLogin> {
                                   ),
                                 ),
                         ),
-                        
                       ),
-                        Text(
-                        _validate == true ? "Click Image" : " ",
-                        style: TextStyle(color: Colors.red, fontSize: 15),
+                      Text(
+                        _image == true ? "Click Image" : "Upload your Photo",
+                        style: TextStyle(
+                            color: _image == true ? Colors.red : Colors.black,
+                            fontSize: 15),
                       ),
                       SizedBox(
                         height: 10,
@@ -630,7 +643,11 @@ class _GuestLoginState extends State<GuestLogin> {
                           key: _key,
                           autovalidate: _validate,
                           child: _emailPasswordWidget()),
-                      _submitButton(context),
+                      guest == null
+                          ? _submitButton(context)
+                          : CircularProgressIndicator(
+                              strokeWidth: 5.0,
+                            ),
                     ]),
               ),
             ]),

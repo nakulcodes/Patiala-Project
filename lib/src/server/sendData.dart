@@ -39,7 +39,6 @@ class _LoginLoaderUserState extends State<LoginLoaderUser> {
         setTitle("reg_user");
 
         headers["token"] = respbody["token"];
-     
 
         // print(person.namee);
 
@@ -47,8 +46,11 @@ class _LoginLoaderUserState extends State<LoginLoaderUser> {
             MaterialPageRoute(builder: (context) => NavigationBar()));
       } else if (respbody["status"] == "false") {
         // print(person.namee);
-        Navigator.pop(context);
-        // Scaffold.of(widget.context).showSnackBar(snackBarLogin);
+        dialog(
+            context,
+            "Wrong Credentials!",
+            Image.asset("assets/images/red2.png"),
+            () => Navigator.popAndPushNamed(context, "loginPage"));
 
         print("Error is Dashboard moving......");
       }
@@ -86,7 +88,7 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
     print("Coming......... inside Manager Login Check");
     String name = widget._nameContro;
     String pass = widget._passContro;
-    
+
     String data = '{"email":"$name","password":"$pass"}';
     print(data);
 
@@ -100,9 +102,6 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
 
     if (response.statusCode == 200) {
       if (respbody["status"] == "true") {
-        
-        
-
         setUser(respbody, true);
         setBank(respbody["bank_id"]);
         setMobileManager(respbody["phone"]);
@@ -119,9 +118,11 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
 
         // Navigator.pushReplacementNamed(context, )
       } else if (respbody["status"] == "false") {
-        // print(person.namee);
-        Navigator.pop(context);
-        // Scaffold.of(widget.context).showSnackBar(snackBarLogin);
+        dialog(
+            context,
+            "Wrong Credentials!",
+            Image.asset("assets/images/red2.png"),
+            () => Navigator.popAndPushNamed(context, "loginPage"));
 
         print("Error is Dashboard moving......");
       }
@@ -144,54 +145,8 @@ class _LoginLoaderManagerState extends State<LoginLoaderManager> {
   }
 }
 
-void registerUser(BuildContext context1, String nameReg, String emailReg,
-    String phoneReg, String passReg, String addReg, File _image) async {
-  String dataReg =
-      '{"phone": "$phoneReg","name": "$nameReg","password":"$passReg","DOB":"null","email":"$emailReg","s3_link":"null","address":"$addReg"}';
 
-  var responseReg =
-      await http.post(userRegister, headers: headers, body: dataReg);
-  String resp = responseReg.body;
-
-  var respbody = json.decode(resp);
-  print(respbody["status"]);
-  if (responseReg.statusCode == 200) {
-    if (respbody["status"] == "true") {
-      print("Registered.....");
-
-      ftpClient.connect();
-      print(_image.path);
-
-      try {
-        print("Tryingg");
-        ftpClient.changeDirectory("/Images/User/");
-        ftpClient.makeDirectory(emailReg);
-        ftpClient.changeDirectory(emailReg);
-
-        ftpClient.uploadFile(_image);
-      } catch (e) {
-        print(e);
-      } finally {
-        ftpClient.disconnect();
-      }
-
-      _dialog(
-          context1,
-          "You have sucessfully registered",
-          Image.asset("assets/images/tick2.png"),
-          () => Navigator.popAndPushNamed(context1, "loginPage"));
-    }
-    if (respbody["status"] == "false") {
-      print("Error");
-
-      _dialog(context1, "You have already registered",
-          Image.asset("assets/images/red2.png"), () => Navigator.popAndPushNamed(context1, "loginPage"));
-    }
-  
-  }
-}
-
-Future<Widget> _dialog(
+Future<Widget> dialog(
     BuildContext _context, String title, Widget image, Function ontapp) {
   return showDialog(
       context: _context,
@@ -235,68 +190,7 @@ Widget _button(String title, Color col, Function onPressed) {
   );
 }
 
-void registerManager(BuildContext context1, String nameReg, String emailReg,
-    String phoneReg, String passReg, String addReg, File _image) async {
-  // Scaffold.of(context).showSnackBar(snackBarRegister);
-  // String nameReg = regNameData.text;
-  // String emailReg = regEmailData.text.replaceAll(' ', '');
-  // String phoneReg = regPhoneData.text.replaceAll(' ', '');
-  // String passReg = regPassData.text.replaceAll(' ', '');
-  // String addReg = regAddData.text;
 
-  print("$nameReg+$emailReg+$phoneReg+$passReg");
-  String dataReg =
-      '{"phone": "$phoneReg","name": "$nameReg","password":"$passReg","DOB":"null","email":"$emailReg","s3_link":"null","address":"$addReg"}';
-
-  var responseReg =
-      await http.post(managerRegister, headers: headers, body: dataReg);
-  String resp = responseReg.body;
-
-  var respbody = json.decode(resp);
-  print(respbody["status"]);
-  print(respbody);
-  if (responseReg.statusCode == 200) {
-    // regNameData.clear();
-    // regEmailData.clear();
-    // regPhoneData.clear();
-    // regPassData.clear();
-
-    // regAddData.clear();
-    if (respbody["status"] == "true") {
-      print("Registered.....");
-      // Scaffold.of(context1).showSnackBar(snackBarRegisterManager);
-      // Duration(seconds: 2);
-      ftpClient.connect();
-
-      try {
-        print("Tryingg");
-        ftpClient.changeDirectory("/Images/Manager/");
-        ftpClient.makeDirectory(emailReg);
-        ftpClient.changeDirectory(emailReg);
-
-        ftpClient.uploadFile(_image);
-        // Duration(seconds: 4);
-        // print(_image.path.split("/").last);
-        // ftpClient.changeDirectory(emailReg);
-        // ftpClient.rename(_image.path.split("/").last, emailReg);
-      } finally {
-        ftpClient.disconnect();
-      }
-      _dialog(
-          context1,
-          "You will recieve mail shortly",
-          Image.asset("assets/images/tick2.png"),
-          () => Navigator.popAndPushNamed(context1, "loginPage"));
-    }
-  }
-  if (respbody["status"] == "false") {
-    print("Error");
-    _dialog(context1, "You have already registered",
-        Image.asset("assets/images/red2.png"), () =>  Navigator.popAndPushNamed(context1, "loginPage"));
-    // Builder(builder: (context1) => Scaffold.of(context1).showSnackBar(snackBarRegister),);
-
-  }
-}
 
 class Guest extends StatefulWidget {
   BuildContext guestContext;
